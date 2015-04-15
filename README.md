@@ -11,7 +11,7 @@ Some challenges also use Python3.xxx.
   - [X] [Single-byte XOR cipher](http://cryptopals.com/sets/1/challenges/3/)
   - [X] [Detect single-character XOR](http://cryptopals.com/sets/1/challenges/4/)
   - [X] [Implement repeating-key XOR](http://cryptopals.com/sets/1/challenges/5/)
-  - [] [Break repeating-key XOR](http://cryptopals.com/sets/1/challenges/6/)
+  - [ ] [Break repeating-key XOR](http://cryptopals.com/sets/1/challenges/6/)
   - [X] [AES in ECB mode](http://cryptopals.com/sets/1/challenges/7/)
   - [X] [Detect AES in ECB mode](http://cryptopals.com/sets/1/challenges/8/)
 
