@@ -49,9 +49,6 @@ void aes_128_sub_bytes(unsigned char *state);
 void aes_128_inv_sub_bytes(unsigned char *state);
 
 
-// Test functions for validation
-int test_aes_128_sub_bytes();
-int test_aes_128_inv_sub_bytes();
 
 
 #endif  /* _AES_128_S_BOX_H */
