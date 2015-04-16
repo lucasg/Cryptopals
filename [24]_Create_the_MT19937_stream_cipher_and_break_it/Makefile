@@ -12,7 +12,7 @@ endif
 all: build_dir mt_generate compile solve
 
 mt_generate:
-	$(MAKE) -C ../tools/ mt19937
+	$(MAKE) -C $(TOOLS)/ mt19937
 
 compile: build_dir $(OBJS) mt_generate
 	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB)  $(OBJS) -o $(TARGET) -lmt19937

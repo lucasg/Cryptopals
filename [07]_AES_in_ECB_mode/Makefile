@@ -19,9 +19,9 @@ AES_VAL_OBJS = $(addprefix $(TMP)/, $(TMP_AES_VAL_OBJS))
 
 OBJS := b64.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
-
-DEP = $(OBJS:.o=.d)  
+ifneq ($(MAKECMDGOALS),clean)
 -include $(DEP)
+endif
 
 
 all : build_dir compile validate solve 
@@ -31,7 +31,7 @@ libaes_128:
 	$(MAKE) -C ../tools/ aes_128
 
 compile: build_dir $(OBJS) libaes_128
-	$(CC) $(CFLAGS) -static -L"../tools/lib/" $(OBJS) -o $(TARGET) -laes_128
+	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB) $(OBJS) -o $(TARGET) -laes_128
 
 validate: $(AES_VAL_OBJS)
 	gcc -g -Wall $(AES_VAL_OBJS) -o $(BIN)/aes_val
@@ -39,7 +39,7 @@ validate: $(AES_VAL_OBJS)
 
 
 .PHONY: solve
-solve:
+solve: compile
 	$(TARGET) < input.txt |tee output.txt
 	@echo -ne "\n"
 	

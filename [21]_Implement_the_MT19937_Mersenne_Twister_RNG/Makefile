@@ -10,7 +10,7 @@ endif
 all: build_dir mt_generate solve
 
 mt_generate: build_dir
-	$(MAKE) -C ../tools/ mt19937
+	$(MAKE) -C $(TOOLS)/ mt19937
 
 .PHONY : solve
 solve: mt_generate

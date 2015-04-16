@@ -13,7 +13,7 @@ endif
 all : build_dir lib_aes compile solve 
 
 lib_aes:
-	$(MAKE) -C ../tools/ aes_128
+	$(MAKE) -C $(TOOLS)/ aes_128
 
 
 compile: build_dir $(OBJS) lib_aes

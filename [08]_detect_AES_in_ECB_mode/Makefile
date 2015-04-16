@@ -9,14 +9,14 @@ ifneq ($(MAKECMDGOALS),clean)
 -include $(DEP)
 endif
 
-all : build_dir aes_generate compile solve 
+all : build_dir lib_aes compile solve 
 
 lib_aes:
-	$(MAKE) -C ../tools/ aes_128
+	$(MAKE) -C $(TOOLS) aes_128
 
 compile: build_dir $(OBJS) lib_aes
 	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB) $(OBJS) -o $(TARGET) -laes_128
 
 .PHONY: solve
 solve: compile
-	$(TARGET) | tee output.txt
+	$(TARGET) | tee result.txt
