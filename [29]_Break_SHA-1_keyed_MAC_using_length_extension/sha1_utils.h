@@ -2,6 +2,7 @@
 	#define _SHA_1_UTILS_H_
 
 #include <unistd.h>
+#include <stdint.h>
 
 #define SWAP_ENDIAN (1)
 

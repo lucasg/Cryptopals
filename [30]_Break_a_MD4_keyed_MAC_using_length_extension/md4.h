@@ -36,6 +36,7 @@
 	#define _MD4_H
 
 #include <unistd.h> 
+#include <stdint.h>
 
 #define MD4_HASH_LENGTH 16
 #define MD4_BLOCK_LENGTH 64
