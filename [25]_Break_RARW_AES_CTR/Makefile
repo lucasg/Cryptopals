@@ -7,12 +7,7 @@ vpath %.d $(TOOLS)/$(TMP):$(TMP)
 
 OBJS := b64.o pkcs7.o decrypt_msg.o edit_target.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
-
-
-DEP = $(OBJS:.o=.d)  
-ifneq ($(MAKECMDGOALS),clean)
--include $(DEP)
-endif
+DEP = $(OBJS:.o=.d) 
 
 
 all : solve compile build_dir   

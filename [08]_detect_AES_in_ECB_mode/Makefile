@@ -5,9 +5,7 @@ vpath %.o $(TMP)
 
 OBJS := hex.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
-ifneq ($(MAKECMDGOALS),clean)
--include $(DEP)
-endif
+DEP = $(OBJS:.o=.d)  
 
 all : build_dir lib_aes compile solve 
 

@@ -9,11 +9,8 @@ all: solve compile build_dir
 
 OBJS := main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
-
 DEP = $(OBJS:.o=.d)  
-ifneq ($(MAKECMDGOALS),clean)
--include $(DEP)
-endif
+
 
 compile: build_dir $(OBJS) 
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET) 

@@ -2,9 +2,6 @@ include ../global.mk
 
 vpath %.o $(TMP)
 
-ifneq ($(MAKECMDGOALS),clean)
--include $(DEP)
-endif
 
 
 all: build_dir mt_generate solve

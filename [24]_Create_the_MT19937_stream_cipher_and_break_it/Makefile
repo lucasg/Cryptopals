@@ -5,9 +5,7 @@ vpath %.o $(TMP)
 
 OBJS := xor.o target.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
-ifneq ($(MAKECMDGOALS),clean)
--include $(DEP)
-endif
+DEP = $(OBJS:.o=.d) 
 
 all: build_dir mt_generate compile solve
 

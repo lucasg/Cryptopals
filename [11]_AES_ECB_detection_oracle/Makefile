@@ -6,9 +6,7 @@ vpath %.o $(TMP)
 
 OBJS := aes_detect_ecb_mode.o main.o hamdist.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
-ifneq ($(MAKECMDGOALS),clean)
--include $(DEP)
-endif
+DEP = $(OBJS:.o=.d)  
 
 all : build_dir lib_aes compile solve 
 

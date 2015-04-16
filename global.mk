@@ -5,11 +5,6 @@ CFLAGS= -g -Wall -MD -MP
 LDFLAGS=
 LDLIBS=
 
-# Python specifics
-PYTHON_INC = "C:\Program Files (x86)\Python3.4\include"
-PYTHON_LIBFD = "C:\Program Files (x86)\Python3.4\libs"
-PYTHON_LIB = python34
-
 # Target naming rule
 # Extract the number in [] from the project's path :  "/path/[XX]_foo_bar_baz/" -> "XX"
 TARGET_NAME = $(shell pwd | sed 's/.*\[\([0-9]*\)\].*/\1/')
@@ -34,12 +29,12 @@ else
 	
 	MAKE = make
 	AWK = awk
-#RM_R = find -mindepth 1 -delete
 	RM_R = rm -f
 	
 	TARGET = $(BIN)/$(TARGET_NAME)
 	TOOL_TARGET = $(BIN)/$@
 endif
+
 
 # Output folders
 TOOLS := ../tools
@@ -48,12 +43,14 @@ LIB := lib
 BIN := bin
 BDIR := $(TMP) $(BIN) $(LIB)
 
-
+# Include dependencies 
+ifneq ($(MAKECMDGOALS),clean)
+-include $(DEP)
+endif
 
 # Static rules
 $(TMP)/%.o : %.c
 	$(CC) $(CFLAGS) -I$(TOOLS) -L$(TOOLS)/$(LIB) -c $<  -o $@
-
 
 
 

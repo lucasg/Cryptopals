@@ -8,9 +8,6 @@ OBJS := ifreq.o xor.o hex.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
 DEP = $(OBJS:.o=.d)  
 
-ifneq ($(MAKECMDGOALS),clean)
--include $(DEP)
-endif
 
 
 all: build_dir compile solve

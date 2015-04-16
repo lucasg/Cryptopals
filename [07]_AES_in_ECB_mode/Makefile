@@ -19,9 +19,7 @@ AES_VAL_OBJS = $(addprefix $(TMP)/, $(TMP_AES_VAL_OBJS))
 
 OBJS := b64.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
-ifneq ($(MAKECMDGOALS),clean)
--include $(DEP)
-endif
+DEP = $(OBJS:.o=.d)  
 
 
 all : build_dir compile validate solve 

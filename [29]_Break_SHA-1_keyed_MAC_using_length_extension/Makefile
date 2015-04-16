@@ -10,11 +10,8 @@ endif
 
 OBJS := sha1.o sha1_utils.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
-DEP = $(OBJS:.o=.d)  
+DEP = $(OBJS:.o=.d) 
 
-ifneq ($(MAKECMDGOALS),clean)
--include $(DEP)
-endif
 
 all : build_dir compile solve 
 

@@ -7,11 +7,7 @@ vpath %.d $(TMP)
 
 OBJS := target.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
-DEP = $(OBJS:.o=.d)  
-
-ifneq ($(MAKECMDGOALS),clean)
--include $(DEP)
-endif
+DEP = $(OBJS:.o=.d) 
 
 all : build_dir compile solve 
 
