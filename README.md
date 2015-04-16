@@ -1,8 +1,36 @@
 # Cryptopals
 Matasano crypto challenges (http://cryptopals.com/) implemented mostly in C.
 
-Every challenge compile either on Windows (using mingw32 toolchain) or on Linux (Mint and Arch tested).
-Some challenges also use Python3.xxx. 
+## Introduction ##
+
+This is a serie of 48 technical challenges around software programming and cryptography made by some people at Matasano. Every solution can be built either on Windows or on Linux (Mint and Arch tested).
+
+## Requirements ##
+
+* You need to have access to the `gcc` toochain and basic shell commands (`make`, `cd`, `sed`, `awk`, etc.). On Windows, every challenge has been tested against the `mingw32` compiler.
+* Some challenges use pythons scripts : everything has been written for Python 3xx. Older versions may or may not work.
+* `pip` requirements :
+  * On Linux, install `pip3` : `sudo (apt-get install | yum |  pacman -S)  python3-pip` to prevent name clashing with the system-wide pip binary.
+  * `bottle` web framework  for challenges 31 & 32
+  * `tkinter` for challenge 20
+* `libcurl` : challenge 31 & 32 use libcurl to make requests to a remote webpage.
+  * Libcurl isn't installed by default on Windows, so you will need to download the static library compatible with your compiler (or build it yourself) and placing it in the corresponding's lib folder. Download page : http://curl.haxx.se/download.html
+  * On Unix systems, you can either use libcurl statically of dynamically (modify the `Makefile` to your needs). Don't forget to add the installed lib folder (something like `/usr/lib/x86_64-linux-gnu` ) in the `LDFLAGS`.
+  
+
+## Usage ##
+
+The `Makefile` located in the root folder contains every useful commands, while `global.mk` has every project-wide variables.
+
+Ex :
+
+* `make 01 all`  will build all the targets in first challenge.
+* `make tools`   will build all the necessary libraries and bins in the tools folder.
+* `make exos clean`  will run `make clean` on every challenges.
+* `make exos compile`  will run `make compile` on every challenges, building the binary.
+* `make exos solve`  will run `make solve` on every challenges, building the binary and running it.
+
+
 
 ## Set 1
 
