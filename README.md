@@ -29,6 +29,8 @@ Ex :
 * `make exos clean`  will run `make clean` on every challenges.
 * `make exos compile`  will run `make compile` on every challenges, building the binary.
 * `make exos solve`  will run `make solve` on every challenges, building the binary and running it.
+* `make 01 07 09 solve`  will run `make solve` on challenge 01, 07 and 09.
+
 
 
 

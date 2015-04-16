@@ -1,5 +1,5 @@
+#include "xor.h"
 #include "mt19937.h"
-#include "../tools/xor.h"
 #include <time.h>
 #include <stdlib.h>	
 #include <stdio.h>	
