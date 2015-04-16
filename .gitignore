@@ -1,0 +1,15 @@
+# output folders
+**/bin/
+**/lib/
+**/tmp_*/
+**/build/
+
+# Output text 
+**/*result*
+
+# Old stuff
+**/archive/*
+
+# tmp files
+**/__pycache__/
+*.pyc
