@@ -14,8 +14,6 @@ void mt19937_init(struct mt19937_t *engine, uint32_t seed)
 	unsigned int i;
 	uint32_t tmp;
 
-	//printf("Called mt19937 initialisation function !\n");
-
 	index = 0;
 	mt_seed = seed;
 	engine -> seed = seed;
@@ -37,7 +35,6 @@ void mt19937_regenerate_values(struct mt19937_t *engine)
 {
 	unsigned int i;
 
-	//printf("Called mt19937 regenerate function !\n");
 	for (i = 0; i < MT19937_ARRAY_LEN; i++)
 	{
 		uint32_t tmp = (mt[i] & 0x80000000) + 
@@ -57,13 +54,6 @@ void mt19937_regenerate_values(struct mt19937_t *engine)
  */
 uint32_t mt19937_get_value(struct mt19937_t *engine)
 {
-	//printf("Called mt19937 get value function !\n");
-
-	/*// the mt19937 can't produce the 0xffffffff value, 
-	// why is why it's used for the error code
-	if (engine -> seed != mt_seed)
-		return (uint32_t) -1; */
-
 	if (!index)
 		mt19937_regenerate_values(engine);
 

@@ -9,8 +9,7 @@
 #include <string.h>
 
 
-#define AES_128_NUM_ROUNDS (10)
-#define AES_128_BLOCK_LEN  (16)
+
 
 /*
  *  Specific data structure used to increment

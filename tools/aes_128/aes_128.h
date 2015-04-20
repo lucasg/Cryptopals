@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#define AES_128_NUM_ROUNDS (10)
+#define AES_128_BLOCK_LEN  (16)
 /*
  *	AES-128 constants.
  */
@@ -21,7 +23,7 @@ enum AES_128_OPERATION_MODE {ECB, CBC, CTR } ;
  */
 union aes_128_init
 {
-	uint8_t iv[16];
+	uint8_t iv[AES_128_BLOCK_LEN];
 	uint64_t nonce;
 
 };
