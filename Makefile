@@ -24,7 +24,7 @@ exos: $(exercices)
 
 .PHONY : exercices
 $(exercices):
-	@$(MAKE) -C "$(shell ls -d \[$@\]*)" $(COMMAND) 
+	@$(MAKE) -C $(shell ls -d \[$@\]*) $(COMMAND) 
 	
 	
 .PHONY : tools
