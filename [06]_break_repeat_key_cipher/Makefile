@@ -1,28 +1,33 @@
-TARGET=./6.exe
+include ../global.mk
 
-TOOLS=../tools/hamdist.c\
-	  ../tools/ifreq.c\
-	  ../tools/xor.c\
-	  ../tools/b64.c 
+vpath %.c $(TOOLS)
+vpath %.o $(TMP)
 
-all: decode break solve
+DECODE_TARGET:=$(BIN)/main_decrypt
+ifeq ($(OS), Windows_NT)
+	DECODE_TARGET:=$(BIN)/main_decrypt.exe
+endif
+DECODE_TOOLS = $(TOOLS)/hamdist.c \
+			   $(TOOLS)/xor.c 	  \
+			   $(TOOLS)/b64.c
+
+OBJS := hamdist.o xor.o b64.o main.o
+OBJS := $(addprefix $(TMP)/, $(OBJS))
+DEP = $(OBJS:.o=.d)  
+
+all: build_dir decode compile solve
 
 .PHONY: decode
-decode: main_decrypt.c 
-	gcc -g -Wall $(TOOLS) main_decrypt.c -o ./$@
+decode: build_dir main_decrypt.c 
+	$(CC) $(CFLAGS) $(DECODE_TOOLS) main_decrypt.c -o $(DECODE_TARGET)
 
-break:
-	gcc -g -Wall $(TOOLS) main.c -o $(TARGET)
+compile: build_dir $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)
 
 
 .PHONY: solve
-solve: break
-	$(TARGET) encoded_fixed.txt | tee probable_keys.txt
+solve: compile decode
+	$(TARGET) input1.txt | tee result_keys.txt
 	@echo ""
 	@echo "Decoding with the most probable key"
-	./decode.exe encoded_fixed.txt "Terminator X: Bring the noise"
-
-.PHONY: clean
-clean:
-	rm -rf $(TARGET)
-	rm -rf ./decode
+	$(DECODE_TARGET) encoded_fixed.txt "Terminator X: Bring the noise" | tee result.txt
