@@ -3,7 +3,7 @@ Matasano crypto challenges (http://cryptopals.com/) implemented mostly in C.
 
 ## Introduction ##
 
-This is a serie of 48 technical challenges around software programming and cryptography made by some people at Matasano. Every solution can be built either on Windows or on Linux (Mint and Arch tested).
+This is a serie of 56 technical challenges around software programming and cryptography made by some people at Matasano. Every solution can be built either on Windows or on Linux (Mint and Arch tested).
 
 ## Requirements ##
 
@@ -99,3 +99,14 @@ Ex :
   - [ ] [RSA parity oracle](http://cryptopals.com/sets/6/challenges/46)
   - [ ] [Bleichenbacher's PKCS 1.5 Padding Oracle (Simple Case)](http://cryptopals.com/sets/6/challenges/47)
   - [ ] [Bleichenbacher's PKCS 1.5 Padding Oracle (Complete Case)](http://cryptopals.com/sets/6/challenges/48)
+
+## Set 7
+  
+  - [ ] [CBC-MAC Message Forgery](http://cryptopals.com/sets/7/challenges/49)
+  - [ ] [Hashing with CBC-MAC](http://cryptopals.com/sets/7/challenges/50)
+  - [ ] [Compression Ratio Side-Channel Attacks](http://cryptopals.com/sets/7/challenges/51)
+  - [ ] [Iterated Hash Function Multicollisions](http://cryptopals.com/sets/7/challenges/52)
+  - [ ] [Kelsey and Schneier's Expandable Messages](http://cryptopals.com/sets/7/challenges/53)
+  - [ ] [Kelsey and Kohno's Nostradamus Attack](http://cryptopals.com/sets/7/challenges/54)
+  - [ ] [MD4 Collisions](http://cryptopals.com/sets/7/challenges/55)
+  - [ ] [RC4 Single-Byte Biases](http://cryptopals.com/sets/7/challenges/56)
