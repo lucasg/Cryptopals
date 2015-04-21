@@ -41,7 +41,7 @@ Ex :
   - [X] [Single-byte XOR cipher](http://cryptopals.com/sets/1/challenges/3/)
   - [X] [Detect single-character XOR](http://cryptopals.com/sets/1/challenges/4/)
   - [X] [Implement repeating-key XOR](http://cryptopals.com/sets/1/challenges/5/)
-  - [ ] [Break repeating-key XOR](http://cryptopals.com/sets/1/challenges/6/)
+  - [X] [Break repeating-key XOR](http://cryptopals.com/sets/1/challenges/6/)
   - [X] [AES in ECB mode](http://cryptopals.com/sets/1/challenges/7/)
   - [X] [Detect AES in ECB mode](http://cryptopals.com/sets/1/challenges/8/)
 
@@ -75,12 +75,13 @@ Ex :
   - [X] [Implement a SHA-1 keyed MAC](http://cryptopals.com/sets/4/challenges/28/)
   - [X] [Break a SHA-1 keyed MAC using length extension](http://cryptopals.com/sets/4/challenges/29/)
   - [X] [Break an MD4 keyed MAC using length extension](http://cryptopals.com/sets/4/challenges/30/)
-  - [ ] [Implement and break HMAC-SHA1 with an artificial timing leak](http://cryptopals.com/sets/4/challenges/31/)
-  - [ ] [Break HMAC-SHA1 with a slightly less artificial timing leak](http://cryptopals.com/sets/4/challenges/32/)
+  - [X] [Implement and break HMAC-SHA1 with an artificial timing leak](http://cryptopals.com/sets/4/challenges/31/)
+  - [X] [Break HMAC-SHA1 with a slightly less artificial timing leak](http://cryptopals.com/sets/4/challenges/32/)
+    -> Only on Linux.
 
 ## Set 5
 
-  - [ ] [Implement Diffie-Hellman](http://cryptopals.com/sets/5/challenges/33)
+  - [X] [Implement Diffie-Hellman](http://cryptopals.com/sets/5/challenges/33)
   - [ ] [Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection](http://cryptopals.com/sets/5/challenges/34)
   - [ ] [Implement DH with negotiated groups, and break with malicious "g" parameters](http://cryptopals.com/sets/5/challenges/35)
   - [ ] [Implement Secure Remote Password (SRP)](http://cryptopals.com/sets/5/challenges/36)
