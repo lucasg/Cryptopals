@@ -66,9 +66,6 @@ int main (int argc, char **argv) {
 	for (a=0; a<1; a++) sha1_write(&s, "01234567", 8);
 	printHash(sha1_result(&s));
 	printf("\n\n");
-	
-
-	return 0x00;
 
 
 	printf("Test: FIPS 180-2 C.2 and RFC3174 7.3 TEST2\n");
@@ -119,6 +116,15 @@ int main (int argc, char **argv) {
 	sha1_init(&s);
 	for (a=0; a<1000000; a++) sha1_writebyte(&s, 'a');
 	printHash(sha1_result(&s));
+	printf("\n\n");
+
+	// HMAC test
+	printf("Test: HMAC generation\n");
+	printf("Expect:de7c9b85b8b78aa6bc8a7a36f70a90701c9db4d9\n");
+	printf("Result:");
+	sha1_init_Hmac(&s, (uint8_t*) "key", 3);
+	sha1_write(&s, "The quick brown fox jumps over the lazy dog", 43);
+	printHash(sha1_result_Hmac(&s));
 
 
 	return 0;

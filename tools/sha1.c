@@ -149,7 +149,7 @@ uint8_t* sha1_result(struct sha1nfo *s) {
 #define HMAC_IPAD 0x36
 #define HMAC_OPAD 0x5c
 
-void sha1_init_Hmac(struct sha1nfo *s, const uint8_t* key, int keyLength) {
+void sha1_init_Hmac(struct sha1nfo *s, const uint8_t* key, size_t keyLength) {
 	uint8_t i;
 	memset(s->keyBuffer, 0, SHA1_BLOCK_LENGTH);
 	if (keyLength > SHA1_BLOCK_LENGTH) {

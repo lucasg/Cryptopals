@@ -54,7 +54,7 @@ uint8_t* sha1_result(struct sha1nfo *s);
 /*
  *  HMAC implementation using SHA-1 as a hash function.
  */
-void sha1_init_Hmac(struct sha1nfo *s, const uint8_t* key, int keyLength);
+void sha1_init_Hmac(struct sha1nfo *s, const uint8_t* key, size_t keyLength);
 
 /*
  *  Get the digested result from the HMAC
