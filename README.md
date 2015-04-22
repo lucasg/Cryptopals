@@ -82,10 +82,10 @@ Ex :
 ## Set 5
 
   - [X] [Implement Diffie-Hellman](http://cryptopals.com/sets/5/challenges/33)
-  - [ ] [Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection](http://cryptopals.com/sets/5/challenges/34)
-  - [ ] [Implement DH with negotiated groups, and break with malicious "g" parameters](http://cryptopals.com/sets/5/challenges/35)
-  - [ ] [Implement Secure Remote Password (SRP)](http://cryptopals.com/sets/5/challenges/36)
-  - [ ] [Break SRP with a zero key](http://cryptopals.com/sets/5/challenges/37)
+  - [X] [Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection](http://cryptopals.com/sets/5/challenges/34)
+  - [X] [Implement DH with negotiated groups, and break with malicious "g" parameters](http://cryptopals.com/sets/5/challenges/35)
+  - [X] [Implement Secure Remote Password (SRP)](http://cryptopals.com/sets/5/challenges/36)
+  - [X] [Break SRP with a zero key](http://cryptopals.com/sets/5/challenges/37)
   - [ ] [Offline dictionary attack on simplified SRP](http://cryptopals.com/sets/5/challenges/38)
   - [ ] [Implement RSA](http://cryptopals.com/sets/5/challenges/39)
   - [ ] [Implement an E=3 RSA Broadcast attack](http://cryptopals.com/sets/5/challenges/40)
