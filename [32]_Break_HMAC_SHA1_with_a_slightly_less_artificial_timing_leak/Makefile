@@ -47,7 +47,7 @@ webserver:  libsha1_hmac
 ifeq ($(OS), Windows_NT)
 	mv $(shell find build -type f -name "sha1*.pyd") $(LIB)
 else
-	mv $(shell find $(LIB) -type f -name "sha1*.so") $(LIB)
+	mv $(shell find $(LIB)/python -type f -name "sha1*.so") $(LIB)
 endif
 	$(PYTHON) hmac_server.py
 
