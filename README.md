@@ -3,14 +3,16 @@ Matasano crypto challenges (http://cryptopals.com/) implemented mostly in C.
 
 ## Introduction ##
 
-This is a serie of 56 technical challenges around software programming and cryptography made by some people at Matasano. Every solution can be built either on Windows or on Linux (Mint and Arch tested).
+This is a serie of 56 technical challenges around software programming and cryptography made by some people at Matasano. Every solution can be built either on Windows or on Linux (Mint and Arch tested). 
+
+The tools folder contains implementations of several standard cryptographic protocols and utilities : do not use them in production.
 
 ## Requirements ##
 
 * You need to have access to the `gcc` toochain and basic shell commands (`make`, `cd`, `sed`, `awk`, etc.). On Windows, every challenge has been tested against the `mingw32` compiler.
 * Some challenges use pythons scripts : everything has been written for Python 3xx. Older versions may or may not work.
 * `pip` requirements :
-  * On Linux, install `pip3` : `sudo (apt-get install | yum |  pacman -S)  python3-pip` to prevent name clashing with the system-wide pip binary.
+  * On Linux, install `pip3` : `sudo (apt-get install | yum install |  pacman -S)  python3-pip` to prevent name clashing with the system-wide pip binary.
   * `bottle` web framework  for challenges 31 & 32
   * `tkinter` for challenge 20
 * `libcurl` : challenge 31 & 32 use libcurl to make requests to a remote webpage.
@@ -87,8 +89,8 @@ Ex :
   - [X] [Implement Secure Remote Password (SRP)](http://cryptopals.com/sets/5/challenges/36)
   - [X] [Break SRP with a zero key](http://cryptopals.com/sets/5/challenges/37)
   - [ ] [Offline dictionary attack on simplified SRP](http://cryptopals.com/sets/5/challenges/38)
-  - [ ] [Implement RSA](http://cryptopals.com/sets/5/challenges/39)
-  - [ ] [Implement an E=3 RSA Broadcast attack](http://cryptopals.com/sets/5/challenges/40)
+  - [x] [Implement RSA](http://cryptopals.com/sets/5/challenges/39)
+  - [X] [Implement an E=3 RSA Broadcast attack](http://cryptopals.com/sets/5/challenges/40)
 
 ## Set 6
 
@@ -111,3 +113,14 @@ Ex :
   - [ ] [Kelsey and Kohno's Nostradamus Attack](http://cryptopals.com/sets/7/challenges/54)
   - [ ] [MD4 Collisions](http://cryptopals.com/sets/7/challenges/55)
   - [ ] [RC4 Single-Byte Biases](http://cryptopals.com/sets/7/challenges/56)
+
+
+## Licensing
+
+My own code is free to use (attribution is nice, but not mandatory). Other licenses :
+
+* curl : libcurl has a fairy complicated license mix. Since I only link against the lib, my work is not derivative and is not subject to libcurl's licenses.
+* mini-gmp is doubly licensed GPL and LGPL. 
+* sha1 is copied from polarSSL/mbed is GPL also.
+* sha256 is copied from Brad conte crypto-algorithms and is copyleft.
+* rsa prime generation is adapted from SSH 1.2.0, found in MIT Athena's project (Copyright 1995 SSH Communications Security).
