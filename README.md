@@ -84,8 +84,8 @@ Caveat : challenge `#31 & #32` can't be called from the top-level Makefile since
   - [X] [Break a SHA-1 keyed MAC using length extension](http://cryptopals.com/sets/4/challenges/29/)
   - [X] [Break an MD4 keyed MAC using length extension](http://cryptopals.com/sets/4/challenges/30/)
   - [X] [Implement and break HMAC-SHA1 with an artificial timing leak](http://cryptopals.com/sets/4/challenges/31/)
-  - [X] [Break HMAC-SHA1 with a slightly less artificial timing leak](http://cryptopals.com/sets/4/challenges/32/)
-    ↳ This challenge works only on Linux (Arch Linux & Mint tested).
+  - [X] [Break HMAC-SHA1 with a slightly less artificial timing leak](http://cryptopals.com/sets/4/challenges/32/)  
+    - This challenge works only on Linux (Arch Linux & Mint tested).
 
 ## Set 5
 
