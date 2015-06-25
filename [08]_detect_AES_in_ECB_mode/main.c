@@ -41,7 +41,7 @@ int main (int argc, char *argv[])
 
 			for(j = 0; j < 160; j+=16)
 			{
-				hex_decode_c((char*) buf + j, (char*) hex_line + 2*j, j);
+				hex_decode((char*) buf + j, (char*) hex_line + 2*j, 2*j);
 				aes_128_decrypt(aes_buf + j, buf + j, secret_key);
 			}
 

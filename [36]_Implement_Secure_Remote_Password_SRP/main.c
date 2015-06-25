@@ -29,10 +29,9 @@ const char manpage[] = ""
 
 int main(int argc, char *argv[])
 {
-/*	struct sha256nfo zero_h;*/
 	struct server_t s;
 	struct client_t c;
-	mpz_t N, g, k/*, zero*/;
+	mpz_t N, g, k;
 	
 	uint8_t buf[SHA256_HASH_SIZE];
 	struct sha256nfo ctx;
@@ -47,7 +46,6 @@ int main(int argc, char *argv[])
 	mpz_init_set_str(N, NIST_N, 16 );
 	mpz_init_set_str(g, NIST_g, 0 );
 	mpz_init_set_str(k, NIST_k, 0 );
-/*	mpz_init_set_ui(zero, 0 );*/
 
 	server_init(&s, N, g, k, 1);
 	server_add_entry(&s, "test@example.com", 16, "password123", 11);

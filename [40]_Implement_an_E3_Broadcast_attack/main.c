@@ -64,7 +64,7 @@ int gen_random_hex_str(char **hexstring, size_t *hexlen, unsigned int minbitlen,
 	random_str[min_charlen - 1] |= 0x01;	
 
 
-	hex_encode_c(*hexstring, (char*)  random_str, 2*min_charlen);
+	hex_encode(*hexstring, (char*)  random_str, 2*min_charlen);
 	(*hexstring)[2*min_charlen] = 0x00;
 
 	free(random_str);
@@ -165,7 +165,7 @@ int rsa_encrypt(mpz_t *c, mpz_t *n, const char *secret, const size_t secret_len)
 	if (NULL == hex_secret)
 		return 0x01;
 
-	hex_encode_c(hex_secret, secret, 2*secret_len);
+	hex_encode(hex_secret, secret, 2*secret_len);
 	hex_secret[2*secret_len] = 0x00;
 	mpz_init_set_str(m, hex_secret, 16);
 
@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
 		return 0x01;
 	}
 
-	hex_decode_c(decrypted, hex_decrypted, strlen(hex_decrypted));
+	hex_decode(decrypted, hex_decrypted, strlen(hex_decrypted));
 	decrypted[strlen(hex_decrypted)/2] = 0;
 	printf("Decrypted message : %s \n", decrypted);
 

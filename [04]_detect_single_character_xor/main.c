@@ -163,7 +163,7 @@ int detect(const char *filename)
 		/*
 		 *  Decoding each line with the most probable key
 		 */
-		hex_decode_c((char*) hexencl, (char*) edatl, linelen);
+		hex_decode((char*) hexencl, (char*) edatl, linelen);
 		decode_single_line(hexdecl, hexencl, hexlen);
 		
 

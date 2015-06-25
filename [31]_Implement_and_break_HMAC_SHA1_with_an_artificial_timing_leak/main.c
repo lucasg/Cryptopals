@@ -50,7 +50,7 @@ int main(void)
       for (j = 0; j < 256; j++)
       {
         c = j & 0xff;
-        hex_encode_c(full_url + BASE_URL_LEN + 2*i, (const char *) &c, 1);
+        hex_encode(full_url + BASE_URL_LEN + 2*i, (const char *) &c, 2);
         curl_easy_setopt(curl, CURLOPT_URL, full_url);
 
         /* Timing the request */
@@ -67,7 +67,7 @@ int main(void)
       }
 
       printf("Char candidate for pos #%d : 0x%02x, latency=%ld ms\n", i+1, candidate, max_latency );
-      hex_encode_c(full_url + BASE_URL_LEN + 2*i, (const char *) &candidate, 1);
+      hex_encode(full_url + BASE_URL_LEN + 2*i, (const char *) &candidate, 2);
     }
  
 

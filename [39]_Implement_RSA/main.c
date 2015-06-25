@@ -63,7 +63,7 @@ int gen_random_hex_str(char **hexstring, size_t *hexlen, unsigned int minbitlen,
 	random_str[min_charlen - 1] |= 0x01;	
 
 
-	hex_encode_c(*hexstring, (char*)  random_str, 2*min_charlen);
+	hex_encode(*hexstring, (char*)  random_str, 2*min_charlen);
 	(*hexstring)[2*min_charlen] = 0x00;
 
 	free(random_str);
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
 	if (NULL == hex_secret)
 		goto cleanup;
 
-	hex_encode_c(hex_secret, secret, 2*strlen(secret));
+	hex_encode(hex_secret, secret, 2*strlen(secret));
 	hex_secret[2*strlen(secret)] = 0x00;
 	mpz_init_set_str(m, hex_secret, 16);
 
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
 
 	
 	decrypted = mpz_get_str(NULL, 16, dm);
-	hex_decode_c(hex_secret, decrypted, strlen(decrypted));
+	hex_decode(hex_secret, decrypted, 2*strlen(decrypted));
 	hex_secret[strlen(decrypted)/2] = 0;
 	printf("Decrypted message : %s \n", hex_secret);	
 

@@ -96,7 +96,7 @@ void srp_utils_gen_x(mpz_t *x, const char *password, const  size_t password_len,
 	sha256_result(&ctx, (uint8_t*) buf);
 
 	// Convert xH to integer x somehow (put 0x on hexdigest)
-	hex_encode_c(xH, buf, 2*SHA256_HASH_SIZE);
+	hex_encode(xH, buf, 2*SHA256_HASH_SIZE);
 	mpz_init_set_str(*x, xH, 16 );
 
 #ifdef _DEBUG_SRP
@@ -167,7 +167,7 @@ void srp_utils_gen_shared_hash(mpz_t *u, const mpz_t s_pubkey, const mpz_t c_pub
 	sha256_result(&ctx, (uint8_t*) buf);
 
 	// 3. Convert uH to integer u somehow (put 0x on hexdigest)
-	hex_encode_c(hex_buf, buf, 2*SHA256_HASH_SIZE);
+	hex_encode(hex_buf, buf, 2*SHA256_HASH_SIZE);
 	mpz_init_set_str( *u, (char*) hex_buf , 16 );
 	
 
