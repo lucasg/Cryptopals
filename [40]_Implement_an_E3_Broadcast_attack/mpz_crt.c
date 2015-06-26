@@ -24,6 +24,7 @@ void mpz_crt(mpz_t *result, mpz_t residues[3], mpz_t modulus[3])
 	mpz_init(modprod);
 	mpz_mul(modprod, msn[0], modulus[0]); 
 
+	mpz_clear(*result);
 	mpz_init_set_ui(*result, 0);
 	for (i = 0; i  < 3; i++)
 	{
@@ -83,7 +84,7 @@ unsigned int test_mpz_crt()
 	result_str = mpz_get_str(NULL, 0, result);
 	printf("Expected 0x5 : %s\n", result_str);
 
-
+	mpz_clear(result);
 	free(result_str);
 	return 0x01;
 }

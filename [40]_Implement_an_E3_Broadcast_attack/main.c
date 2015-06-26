@@ -86,11 +86,12 @@ int rsa_gen_prime_num(mpz_t *p, mpz_t *q, unsigned int bitlen_min)
 	if (gen_random_hex_str(&random_hexstr, &random_hexlen, bitlen_min, &r_gen))
 		return 0x01;
 	mpz_init_set_str(min_p, random_hexstr, 16);
-
 	free(random_hexstr);
+
 	if (gen_random_hex_str(&random_hexstr, &random_hexlen, bitlen_min, &r_gen))
 		return 0x01;
 	mpz_init_set_str(min_q, random_hexstr, 16);
+	free(random_hexstr);
 
 	// Search for next prime using GMP's Miller-Rabin test
 	mpz_nextprime(p, (const mpz_t*) &min_p);
@@ -134,6 +135,7 @@ int rsa_gen_key(mpz_t *n, mpz_t *e, mpz_t *d)
 		mpz_mul(totient, p_m_1, q_m_1 );
 		
 		// d = 1/e % phi
+		mpz_clear(*d);
 		mpz_invmod(d, *e, totient);
 
 		printf(".");
@@ -182,8 +184,12 @@ int rsa_encrypt(mpz_t *c, mpz_t *n, const char *secret, const size_t secret_len)
 	mpz_init(*c);
 	mpz_powm(*c, m, e, *n);
 
+	// Memory release
 	if (NULL != hex_secret)
 		free(hex_secret);
+	
+	mpz_clear(e);
+	mpz_clear(d);
 	mpz_clear(m);
 	return 0x00;
 }
@@ -227,10 +233,18 @@ int main(int argc, char *argv[])
 
 	printf("Is decoded message correct ? %s", strncmp(decrypted, mc_solaar_secret, strlen(mc_solaar_secret)) ? "NO" : "YES" );	
 
+	// Cleanup
 	if (NULL != hex_decrypted)
 		free(hex_decrypted);
 	if (NULL != decrypted)
 		free(decrypted);
+
+	for (i = 0; i  < 3; i++)
+	{
+		mpz_clear(cipher[i]);
+		mpz_clear(modulo[i]);
+	}
+	mpz_clear(result);
 
 	return 0x00;
 }
