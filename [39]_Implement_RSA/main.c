@@ -78,18 +78,21 @@ int gen_rsa_prime_num(mpz_t *p, mpz_t *q, unsigned int bitlen_min)
 	char *random_hexstr;
 	mpz_t min_p, min_q;
 
-
+	mpz_init(*p);
+	mpz_init(*q);
+		
 	mt19937_init(&r_gen, time(NULL));
 
 	// Generate random hex-strings of at least BITLEN_MIN bits long.
 	if (gen_random_hex_str(&random_hexstr, &random_hexlen, bitlen_min, &r_gen))
 		return 0x01;
 	mpz_init_set_str(min_p, random_hexstr, 16);
-
 	free(random_hexstr);
+	
 	if (gen_random_hex_str(&random_hexstr, &random_hexlen, bitlen_min, &r_gen))
 		return 0x01;
 	mpz_init_set_str(min_q, random_hexstr, 16);
+	free(random_hexstr);
 
 	// Search for next prime using GMP's Miller-Rabin test
 	mpz_nextprime(p, (const mpz_t*) &min_p);
@@ -110,8 +113,7 @@ int main(int argc, char *argv[])
 
 	test_mpz_invmod();
 
-	mpz_init(p);
-	mpz_init(q);
+
 	mpz_init(n);
 	mpz_init(totient);
 	mpz_init_set_ui(one, 1);
@@ -138,9 +140,13 @@ int main(int argc, char *argv[])
 		mpz_mul(totient, p_m_1, q_m_1 );
 		
 		// d = 1/e % phi
+		mpz_clear(d);
 		mpz_invmod(&d, e, totient);
 
 		printf(".");
+
+		mpz_clear(p);
+		mpz_clear(q);
 		
 	}
 	printf("\nRSA key generation done.\n\n");
@@ -173,7 +179,7 @@ int main(int argc, char *argv[])
 
 	
 	decrypted = mpz_get_str(NULL, 16, dm);
-	hex_decode(hex_secret, decrypted, 2*strlen(decrypted));
+	hex_decode(hex_secret, decrypted, strlen(decrypted));
 	hex_secret[strlen(decrypted)/2] = 0;
 	printf("Decrypted message : %s \n", hex_secret);	
 
@@ -183,8 +189,6 @@ int main(int argc, char *argv[])
 	
 cleanup:
 	free(hex_secret);
-	mpz_clear(p);
-	mpz_clear(q);
 	mpz_clear(totient);
 	mpz_clear(one);
 	mpz_clear(p_m_1);

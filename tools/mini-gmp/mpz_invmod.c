@@ -83,7 +83,7 @@ void check_invmod(int x,  int n,  int expected_result)
 
 	mpz_init_set_si(a, x);
 	mpz_init_set_si(b, n);
-	mpz_init(inv);
+	//mpz_init(inv);
 	mpz_invmod(&inv, a, b);
 
 	printf("Invmod of %d %% %d \n", x, n );
