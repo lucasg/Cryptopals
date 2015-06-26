@@ -94,13 +94,13 @@ Caveat : challenge `#31 & #32` can't be called from the top-level Makefile since
   - [X] [Implement DH with negotiated groups, and break with malicious "g" parameters](http://cryptopals.com/sets/5/challenges/35)
   - [X] [Implement Secure Remote Password (SRP)](http://cryptopals.com/sets/5/challenges/36)
   - [X] [Break SRP with a zero key](http://cryptopals.com/sets/5/challenges/37)
-  - [ ] [Offline dictionary attack on simplified SRP](http://cryptopals.com/sets/5/challenges/38)
+  - [X] [Offline dictionary attack on simplified SRP](http://cryptopals.com/sets/5/challenges/38)
   - [x] [Implement RSA](http://cryptopals.com/sets/5/challenges/39)
   - [X] [Implement an E=3 RSA Broadcast attack](http://cryptopals.com/sets/5/challenges/40)
 
 ## Set 6
 
-  - [ ] [Implement unpadded message recovery oracle](http://cryptopals.com/sets/6/challenges/41)
+  - [X] [Implement unpadded message recovery oracle](http://cryptopals.com/sets/6/challenges/41)
   - [ ] [Bleichenbacher's e=3 RSA Attack](http://cryptopals.com/sets/6/challenges/42)
   - [ ] [DSA key recovery from nonce](http://cryptopals.com/sets/6/challenges/43)
   - [ ] [DSA nonce recovery from repeated nonce](http://cryptopals.com/sets/6/challenges/44)
