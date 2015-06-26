@@ -1,0 +1,25 @@
+include ../global.mk
+
+vpath %.c $(TOOLS):$(TOOLS)/mini-gmp
+vpath %.o $(TMP)
+
+OBJS := mini-gmp.o hex.o sha256.o srp_utils.o client.o server.o main.o
+OBJS := $(addprefix $(TMP)/, $(OBJS))
+DEP = $(OBJS:.o=.d) 
+
+# CFLAGS+=-D_DEBUG_SRP
+
+all: build_dir compile solve
+
+mt_generate:
+	$(MAKE) -C $(TOOLS)/ mt19937
+
+compile: build_dir $(OBJS) mt_generate
+	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB)  $(OBJS) -o $(TARGET) -lmt19937
+
+.PHONY : solve
+solve: compile
+	$(TARGET)  | tee result.txt
+	@echo -ne "\n"
+	
+	
