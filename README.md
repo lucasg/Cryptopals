@@ -101,11 +101,11 @@ Caveat : challenge `#31 & #32` can't be called from the top-level Makefile since
 ## Set 6
 
   - [X] [Implement unpadded message recovery oracle](http://cryptopals.com/sets/6/challenges/41)
-  - [ ] [Bleichenbacher's e=3 RSA Attack](http://cryptopals.com/sets/6/challenges/42)
+  - [x] [Bleichenbacher's e=3 RSA Attack](http://cryptopals.com/sets/6/challenges/42)
   - [ ] [DSA key recovery from nonce](http://cryptopals.com/sets/6/challenges/43)
   - [ ] [DSA nonce recovery from repeated nonce](http://cryptopals.com/sets/6/challenges/44)
   - [ ] [DSA parameter tampering](http://cryptopals.com/sets/6/challenges/45)
-  - [ ] [RSA parity oracle](http://cryptopals.com/sets/6/challenges/46)
+  - [x] [RSA parity oracle](http://cryptopals.com/sets/6/challenges/46)
   - [ ] [Bleichenbacher's PKCS 1.5 Padding Oracle (Simple Case)](http://cryptopals.com/sets/6/challenges/47)
   - [ ] [Bleichenbacher's PKCS 1.5 Padding Oracle (Complete Case)](http://cryptopals.com/sets/6/challenges/48)
 
