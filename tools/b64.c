@@ -134,10 +134,10 @@ size_t b64_encode(char *b64, const char *ascii, size_t ascii_wc)
  */
 size_t b64_decode(char *ascii, const  char *b64, size_t b64_wc)
 {
-	size_t ascii_wc = b64_get_ascii_wc(b64_wc);
-	size_t ascii_len = 0;
-
 	char *b64enc_cpy;
+	size_t ascii_len = 0;
+	size_t ascii_wc = b64_get_ascii_wc(b64_wc);
+
 	b64enc_cpy = malloc(b64_wc*sizeof(char));
 	if(NULL == b64enc_cpy)
 		return 0x00;
