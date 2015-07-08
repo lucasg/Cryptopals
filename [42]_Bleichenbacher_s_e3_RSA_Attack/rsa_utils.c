@@ -173,7 +173,7 @@ int rsa_encrypt_msg(mpz_t *c, const mpz_t n, const mpz_t e,  const char *secret,
 		printf("The secret message is 'longer' than the current rsa modulus can accomodate.\n");
 		return 0x01;
 	}
-	
+
 	rsa_encrypt(c, m, n , e);
 
 	// Memory release
@@ -196,12 +196,29 @@ int rsa_decrypt_msg(char **secret, size_t *secret_len, const mpz_t c, const mpz_
 {
 	mpz_t m;
 	char *hex_decrypted;
+	size_t i,hex_dec_len;
 
 	rsa_decrypt(&m, c, d, n);
 	
 	hex_decrypted = mpz_get_str(NULL, 16, m);
-	*secret_len = strlen(hex_decrypted)/2;
-	*secret = malloc(1 + *secret_len*sizeof(char));
+	hex_dec_len = strlen(hex_decrypted);
+
+	
+	*secret_len = hex_dec_len/2;
+	if (hex_dec_len % 2)
+	{
+		/*
+		 * In the case where the resulting hex string length is odd (GMP strip every 0-leading digits)
+		 * we need to pad it in order to decode it correctly. Since mpz_get_str() return a 
+		 * NULL-terminated string, we use to terminator to pad our value to the right.
+		 */
+		memcpy(hex_decrypted+1, hex_decrypted, hex_dec_len);
+		hex_decrypted[0] = 0x00;
+		(*secret_len)++;
+	}	
+		
+
+	*secret = malloc(1 + (*secret_len)*sizeof(char));
 	if (NULL == *secret)
 	{
 		free(hex_decrypted);
@@ -209,8 +226,10 @@ int rsa_decrypt_msg(char **secret, size_t *secret_len, const mpz_t c, const mpz_
 		return 0x01;
 	}
 
-	hex_decode(*secret, hex_decrypted, strlen(hex_decrypted));
+	memset(*secret, 0, *secret_len);
+	hex_decode(*secret, hex_decrypted, 2*(*secret_len));
 	(*secret)[*secret_len] = 0;	
+
 
 	free(hex_decrypted);
 	mpz_clear(m);
