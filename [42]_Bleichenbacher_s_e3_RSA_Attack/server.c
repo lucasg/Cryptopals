@@ -1,6 +1,16 @@
 #include "server.h"
 #include "rsa_utils.h"
+#include "pkcs1_v1.5.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
+struct sign_stored_struct{
+	unsigned char *h_val;
+	size_t h_len;
+};
+
+static struct sign_stored_struct store;
 static mpz_t pubkey, n;
 
 /*
@@ -14,14 +24,30 @@ int server_init(const  mpz_t e, const  mpz_t modulo)
 	return 0x00;
 }
 
+/* 
+ * Register a new "user", which only the signature is kept in memory
+ */
+int server_register_sign(const unsigned char *hash_val, const size_t hash_len)
+{
+	store.h_len = hash_len;
+	store.h_val = malloc(hash_len);
+	if (NULL == store.h_val)
+		return -1;
+
+	memcpy(store.h_val, hash_val, hash_len);
+	return 0x00;
+}
+
 /*
  * Test whether the input number is a valid RSA signature .
  */
 int server_validate_signature(const mpz_t signature)
 {
-	char *msg;
+	char *msg, p_msg[RSA_SIGN_BLOCK_LEN];
 	int msg_valid;
 	size_t msg_len, i;
+
+
 
 
 	/* 
@@ -30,13 +56,19 @@ int server_validate_signature(const mpz_t signature)
 	 */
 	if (rsa_decrypt_msg(&msg, &msg_len, signature, pubkey, n))
 		return -1;
+	
+	if (msg_len > RSA_SIGN_BLOCK_LEN)
+		return -1;
 
-/*	printf("[DEBUG] m : ");
-	for (i = 0; i < msg_len; i++ )
-		printf("%02x", (unsigned char) msg[i]);
-	printf("\n");*/
 
-	msg_valid = pcks1_5_insecure_validate(msg, msg_len);
+	/*
+	 * GMP strip any leading 0-value (since it has no meaning as a number repr).
+	 * So we need to add one in order to pass the validation.
+	 */
+	memset(p_msg, 0, RSA_SIGN_BLOCK_LEN);
+	memcpy(p_msg + 1, msg, msg_len);
+
+	msg_valid = pkcs1_v1_5_insecure_validate(p_msg, msg_len + 1, store.h_val, store.h_len);
 	free(msg);
 
 
@@ -50,6 +82,12 @@ int server_cleanup()
 {
 	mpz_clear(pubkey);
 	mpz_clear(n);
+
+	if (NULL != store.h_val)
+	{
+		free(store.h_val);
+		store.h_val = NULL;
+	}
 
 	return 0x00;	
 }

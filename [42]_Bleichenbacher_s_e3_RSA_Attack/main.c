@@ -4,30 +4,30 @@
 #include "rsa_sign_constants.h"
 #include <string.h>
 #include <stdio.h>
+#include "sha1.h"
 
 
 /*
- * Forged message : 'hi mom !' + 0x00 0x01 0xff 0x00 'sha1' + sha1('hi mom !') + filler with '0x80'
+ * Forged message : 0x00 0x01 0xff 0x00 'sha1' + sha1('hi mom !') + filler with '0x80'
  * The filler part is here to help finding a perfect root-cube number which will have the same string as the message we want to forge.
  * I abused the validator since I know it will look for the last null byte and check the sha-buffer after, regardless of the string size.
  * The fe filler can also be inserted after the 0x01 0x0ff, but it is more complicated to convert back-and-forth to number that way.
  */
-static char forged_msg[] = "6869206d6f6d20210001ff007368613199ed8c2f4b3000293d1823f1a493b6a1dc17d55d80808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808008080808080808080808080808080808080808080808080";
+static char forged_msg[] = "0001ff007368613199ed8c2f4b3000293d1823f1a493b6a1dc17d55d8080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080800808080808080808080808080808080808080808080808";
 		
 
 
 int main (int argc, char *argv[])
 {
+	struct sha1nfo sha1_h;
 	int res_sig_greater;
 	mpz_t n, e, d, s, f_msg, f_sig, valid_f_sig;
 
-	if (rsa_gen_key(&n, &e, &d, RSA_SIGN_BLOCK_LEN))
+	if (rsa_gen_key(&n, &e, &d, RSA_SIGN_KEY_BITSIZE))
 	{
 		printf("Error while generating RSA keys\n");
 		return -1;
 	}
-
-
 	
 	if (client_init(d, n))
 	{
@@ -40,6 +40,15 @@ int main (int argc, char *argv[])
 		printf("Error while initializing server\n");
 		return -1;	
 	}
+
+	sha1_init(&sha1_h);
+	sha1_write(&sha1_h, "hi mom !", 8);
+	if (server_register_sign((unsigned char*) sha1_result(&sha1_h), SHA1_HASH_LENGTH))
+	{	
+		printf("Error while registering signature\n");
+		return -1;	
+	}
+
  
 	/*  
 	 *  Unit-testing the whole signing and validating process

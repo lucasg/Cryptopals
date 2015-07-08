@@ -1,6 +1,6 @@
 #include "client.h"
 #include "rsa_utils.h"
-#include "pkcs1_5.h"
+#include "pkcs1_v1.5.h"
 #include "sha1.h"
 #include "sha256.h"
 
@@ -23,48 +23,17 @@ int client_init(const mpz_t private_key,const  mpz_t modulo)
  */
 int client_sign_msg(mpz_t *signature, const char *msg, const size_t msg_len, const enum rsa_sign_hash_method hash_method )
 {
-	size_t i;
-	struct sha256nfo sha256_h;
-	struct sha1nfo sha1_h;
-	char padded_msg[RSA_SIGN_BLOCK_LEN/8 - 2];
-	uint8_t sha256_buf[SHA256_HASH_SIZE];
+	char padded_msg[RSA_SIGN_BLOCK_LEN];
 
-	switch(hash_method)
-	{
-	case SHA1:
-		sha1_init(&sha1_h);
-		sha1_write(&sha1_h, msg, msg_len);
 
-		if(pkcs1_5_generate((unsigned char*) padded_msg, (unsigned char*)  msg, msg_len, RSA_SIGN_HASH_METHOD_SHA_1 , (char*) sha1_result(&sha1_h), SHA1_HASH_LENGTH , RSA_SIGN_BLOCK_LEN/8 - 2))
-			return -1;
-
-		break;
-		
-	case SHA256:
-		sha256_init(&sha256_h);
-		sha256_write(&sha256_h, (uint8_t*) msg, msg_len);
-		sha256_result(&sha256_h, sha256_buf);
-
-		if(pkcs1_5_generate((unsigned char*) padded_msg, (unsigned char*)  msg, msg_len, RSA_SIGN_HASH_METHOD_SHA_256 , (unsigned char*) sha256_buf, SHA256_HASH_SIZE , RSA_SIGN_BLOCK_LEN/8 - 2))
-			return -1;
-
-		break;
-
-	default:
+	if(pkcs1_v1_5_generate((unsigned char*) padded_msg, (unsigned char*)  msg, msg_len, RSA_SIGN_BLOCK_LEN, hash_method))
 		return -1;
-	}
-
-/*	printf("[DEBUG] s : ");
-	for (i = 0; i < msg_len; i++)
-		printf("%c", padded_msg[i]);
-	for (i = msg_len; i < RSA_SIGN_BLOCK_LEN/8 - 2; i++ )
-		printf("%02x", (unsigned char) padded_msg[i]);
-	printf("\n");*/
 
 	/*
 	 *  RSA "encryption" using d (inverse of e modulo phi). It's in fact a "decryption".
 	 */
-	return rsa_encrypt_msg(signature, n, pkey, padded_msg , sizeof(padded_msg));
+	return rsa_encrypt_msg(signature, n, pkey, padded_msg , RSA_SIGN_BLOCK_LEN);
+
 }
 
 /*
