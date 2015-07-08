@@ -32,7 +32,7 @@ unsigned char hex_encode_ch(unsigned char value)
  */
 void hex_decode(char *hexstr, const char *symstr, size_t hsize)
 {
-	unsigned int i;
+	size_t i;
 	for(i=0; 2*i < hsize; i++)
 		hexstr[i] = (hex_decode_ch(symstr[2*i]) << 4) + hex_decode_ch(symstr[2*i+1]);
 }
@@ -43,7 +43,7 @@ void hex_decode(char *hexstr, const char *symstr, size_t hsize)
  */
 void hex_encode(char *symstr, const char *hexstr, size_t hsize)
 {
-	unsigned int i;
+	size_t i;
 	for(i=0; 2*i < hsize; i++)
 	{
 		symstr[2*i  ] = (char) hex_encode_ch(hexstr[i] >> 4);
