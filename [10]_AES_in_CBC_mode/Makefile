@@ -17,5 +17,5 @@ compile: build_dir $(OBJS) lib_aes
 
 .PHONY: solve
 solve: compile
-	$(TARGET) < input.txt | tee result.txt
-	@echo -ne "\n"
+	$(TARGET) < input.txt | tee result.txt	
+	@$(ECHO_NE)

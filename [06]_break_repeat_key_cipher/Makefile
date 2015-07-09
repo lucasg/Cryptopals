@@ -28,6 +28,7 @@ compile: build_dir $(OBJS)
 .PHONY: solve
 solve: compile decode
 	$(TARGET) input1.txt | tee result_keys.txt
-	@echo ""
+	@$(ECHO_NE)
 	@echo "Decoding with the most probable key"
 	$(DECODE_TARGET) encoded_fixed.txt "Terminator X: Bring the noise" | tee result.txt
+	@$(ECHO_NE)

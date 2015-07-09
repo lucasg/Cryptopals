@@ -14,9 +14,9 @@ compile: build_dir $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET) 
 
 .PHONY : solve
-solve:
+solve: compile
 	$(TARGET) ICE < vanilla.ice | tee result1
-	@echo -ne "\n"
+	@$(ECHO_NE)
 	
 # count the number of different lines :
 	diff -U 0 result1 solution1 | grep ^@ | wc -l 

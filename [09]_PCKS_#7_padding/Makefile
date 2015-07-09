@@ -16,7 +16,7 @@ compile: build_dir $(OBJS)
 .PHONY : solve
 solve: compile
 	$(TARGET) -l 20 "YELLOW SUBMARINE" | tee result1
-	@echo -ne "\n"
+	@$(ECHO_NE)
 	
 # count the number of different lines :
 	diff -U 0 result1 solution1 | grep ^@ | wc -l 

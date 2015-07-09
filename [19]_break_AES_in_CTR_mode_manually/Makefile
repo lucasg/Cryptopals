@@ -28,4 +28,4 @@ solve: compile
 
 	for i in $(shell find ctexts -type f); do find ctexts -type f | xargs $(PYTHON) matrix.py $$i  | tee -a result.txt  ; done
 
-	@echo -ne "\n"
+	@$(ECHO_NE)

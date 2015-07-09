@@ -18,6 +18,6 @@ compile: build_dir $(OBJS) mt_generate
 .PHONY : solve
 solve:	compile
 	$(TARGET) | tee result.txt
-	@echo -ne "\n"
+	@$(ECHO_NE)
 	
 	

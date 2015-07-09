@@ -24,6 +24,6 @@ solve: compile
 	mkdir -p ctexts
 	
 	$(TARGET) | tee result.txt
-	@echo -ne "\n"
+	@$(ECHO_NE)
 	
 	

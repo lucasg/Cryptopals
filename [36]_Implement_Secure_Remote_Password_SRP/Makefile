@@ -31,6 +31,6 @@ solve:	sha256_test compile
 	$(TARGET) "test@example.com" "test123" | tee result.txt
 	$(TARGET) "tests@example.com" "password123" | tee result.txt
 	$(TARGET) "test@example.com" "password123" | tee result.txt
-	@echo -ne "\n"
+	@$(ECHO_NE)
 	
 	

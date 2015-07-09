@@ -38,8 +38,8 @@ validate: $(AES_VAL_OBJS)
 
 .PHONY: solve
 solve: compile
-	$(TARGET) < input.txt | tee output.txt
-	@echo -ne "\n"
+	$(TARGET) < input.txt | tee result.txt
+	@$(ECHO_NE)
 	
 # count the number of different lines :
-	diff -U 0 output.txt solution.txt | grep ^@ | wc -l 
+	diff -U 0 result.txt solution.txt | grep ^@ | wc -l 

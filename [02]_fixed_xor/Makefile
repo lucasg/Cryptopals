@@ -18,7 +18,7 @@ compile: build_dir $(OBJS)
 .PHONY : solve
 solve: compile
 	$(TARGET) input1 input2 | tee result1
-	@echo -ne "\n"
+	@$(ECHO_NE)
 # count the number of different lines :
 	diff -U 0 result1 solution1 | grep ^@ | wc -l 
 

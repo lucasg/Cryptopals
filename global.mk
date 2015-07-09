@@ -22,6 +22,8 @@ ifeq ($(OS), Windows_NT)
 
 	TARGET = $(BIN)/$(TARGET_NAME).exe
 	TOOL_TARGET = $(BIN)/$@.exe
+
+	ECHO_NE = echo -ne "\n"
 else
 	ARCH = linux
 	PYTHON = python3
@@ -33,6 +35,8 @@ else
 	
 	TARGET = $(BIN)/$(TARGET_NAME)
 	TOOL_TARGET = $(BIN)/$@
+
+	ECHO_NE = echo "\n"
 endif
 
 
