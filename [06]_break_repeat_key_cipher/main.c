@@ -257,7 +257,8 @@ int main(int argc, char *argv[])
 			pkey[k] = detect_key_single_line((char*) tencdata + k*blkcount, blkcount);
 		pkey[blksize] = 0x00;
 		printf("%s\n", pkey);
-	
+
+		free(pkey);
 	}
 
 

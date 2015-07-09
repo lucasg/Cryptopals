@@ -111,7 +111,7 @@ void decode_single_line(unsigned char *ldecdata, unsigned char *lencdata, size_t
  */
 int detect(const char *filename)
 {
-	FILE* edatfd = fopen(filename/*argv[1]*/, "rb");
+	FILE* edatfd = fopen(filename, "rb");
 
 
 	unsigned char *edatl = NULL, *ddatl = NULL;

@@ -67,7 +67,8 @@ int encrypt(unsigned char** cipher, const unsigned char* data, unsigned int data
 
 	memset(tmp, 0, padded_len*sizeof(char));
 	memcpy(tmp, randprefix, randprefixlen*sizeof(char));
-	memcpy(tmp + randprefixlen, data, datalen*sizeof(char));
+	if (NULL != data)
+		memcpy(tmp + randprefixlen, data, datalen*sizeof(char));
 
 
 	b64_decode((char*) tmp + randprefixlen + datalen, (const char*) b64secret, strlen((char*) b64secret));
@@ -271,5 +272,6 @@ int main (int argc, char *argv[])
 
 	printf("Decoded String : %s \n", decoded_string );
 
+	free(decoded_string);
 	return 0x00;
 }
