@@ -11,7 +11,7 @@
  */
 size_t loadline(FILE *fstream, char* *contents, size_t *contents_size)
 {
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32) || defined (__CYGWIN__)
 	char *bufptr = NULL;
     char *p = bufptr;
     size_t size;
@@ -61,10 +61,10 @@ size_t loadline(FILE *fstream, char* *contents, size_t *contents_size)
     *contents_size = size;
 
     return p - bufptr - 1;
-#elif defined(linux) //_POSIX_C_SOURCE >= 200809L || _XOPEN_SOURCE >= 700
+#elif defined(linux) /*_POSIX_C_SOURCE >= 200809L || _XOPEN_SOURCE >= 700 */
 	return getline(contents, contents_size, fstream);
 #else
-	return 0;
+	return 0x00;
 #endif
 
 }
@@ -111,86 +111,88 @@ void decode_single_line(unsigned char *ldecdata, unsigned char *lencdata, size_t
  */
 int detect(const char *filename)
 {
-	FILE* edatfd = fopen(filename, "rb");
+	int lidx = 0;
+	FILE* edatfd = NULL;
+	unsigned char *edatl = NULL,
+				  *ddatl = NULL,
+				  *hexencl = NULL,
+				  *hexdecl= NULL;
+	size_t edatllen = 0, linelength, hexlen;
+	size_t i, print_char_count = 0;
 
 
-	unsigned char *edatl = NULL, *ddatl = NULL;
-	unsigned char *hexencl = NULL, *hexdecl= NULL;
-	size_t edatllen = 0, linelen, hexlen;
+	edatfd = fopen(filename, "rb");
+	if (NULL == edatfd)
+	{
+		printf("Error when calling fopen(%s) : %s\n", filename, strerror(errno));
+		return errno;
+	}
 
-	unsigned int lidx = 0;
-
-	
 	while(-1 != loadline(edatfd,(char **) &edatl, &edatllen))
 	{
-		linelen = strlen((char*)edatl) - 1;
-		hexlen = linelen/2;
+		if (NULL == edatl)
+			goto cleanup;
+
+		linelength = strlen((char*)edatl) - 1;
+		hexlen = linelength/2;
 		
-		// Fixed-length texts hypothesis here
+		/* Fixed-length texts hypothesis here */
 		if (!lidx)
 		{
-			hexencl = malloc(hexlen*sizeof(char));
+			hexencl = malloc(hexlen);
 			if(NULL == hexencl)
-			{
-				free(edatl);
-				return 0x2;
-			}
+				goto cleanup;
 
-			hexdecl = malloc(hexlen*sizeof(char));
+			hexdecl = malloc(hexlen);
 			if(NULL == hexdecl)
-			{
-				free(edatl);
-				free(hexencl);
-				return 0x2;
-			}
+				goto cleanup;
 
-			ddatl = malloc((1+hexlen)*sizeof(char));
+			ddatl = malloc((1+hexlen));
 			if(NULL == ddatl)
-			{
-				free(edatl);
-				free(hexdecl);
-				free(hexencl);
-				return 0x2;
-			}
+				goto cleanup;
 		}
 
 		
-		memset(hexencl,0, hexlen*sizeof(char));
-		memset(hexdecl,0, hexlen*sizeof(char));
-		memset(ddatl,0, (1+hexlen)*sizeof(char));
+		memset(hexencl,0, hexlen);
+		memset(hexdecl,0, hexlen);
+		memset(ddatl,0, 1+hexlen);
 
 		
 		/*
 		 *  Decoding each line with the most probable key
 		 */
-		hex_decode((char*) hexencl, (char*) edatl, linelen);
+		hex_decode((char*) hexencl, (char*) edatl, linelength);
 		decode_single_line(hexdecl, hexencl, hexlen);
 		
 
 		/*
 		 *  Convert to printable characters.
 		 */
-		unsigned int i,j = 0;
+		print_char_count = 0;
 		for (i = 0; i < hexlen ;i++)
 		{
 			ddatl[i] = (char) hexdecl[i];
 
-			// test if it's a 'printable' char
-			j += (' '<=hexdecl[i] && hexdecl[i]<='}') + (hexdecl[i]=='\t') + (hexdecl[i]=='\n');
+			/* test if it's a printable char */
+			print_char_count += (' '<=hexdecl[i] && hexdecl[i]<='}') + (hexdecl[i]=='\t') + (hexdecl[i]=='\n');
 		}
 		
-		if (j == hexlen)
-			printf("%d - %d : %s\n", lidx + 1, j, (char*) ddatl );
+		if (print_char_count == hexlen)
+			printf("%d - %d : %s\n", lidx + 1, print_char_count, (char*) ddatl );
 
 		
 		lidx++;
 	}
 
-
-	free(edatl);
-	free(ddatl);
-	free(hexencl);
-	free(hexdecl);
+cleanup:
+	if (NULL != edatl)
+		free(edatl);
+	if (NULL != ddatl)
+		free(ddatl);
+	if (NULL != hexencl)
+		free(hexencl);
+	if (NULL != hexdecl)
+		free(hexdecl);
 
 	
 	return 0x0;
