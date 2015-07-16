@@ -6,39 +6,6 @@
 #include <string.h>
 #include <unistd.h>
 
-/*
- *   Load the next line of the filestream
- */
-unsigned load_file(char *fd_stream,	char **contents, size_t *contents_size)
-{
-	FILE *stream;
-	unsigned int fileSize = 0;
-	void *p;
-
-	//Open the stream. Note "b" to avoid DOS/UNIX new line conversion.
-	stream = fopen(fd_stream, "rb");
-
-	//Seek to the end of the file to determine the file size
-	fseek(stream, 0L, SEEK_END);
-	fileSize = ftell(stream);
-	fseek(stream, 0L, SEEK_SET);
-
-	//Allocate enough memory (add 1 for the \0, since fread won't add it)
-	p = malloc(fileSize+1);
-	if( NULL == p)
-		return 0x00;
-	(*contents) = (char*) p;
-
-	//Read the file 
-	*contents_size=fread((*contents),1,fileSize,stream) + 1;
-	(*contents)[*contents_size]=0; // Add terminating zero.
-
-	//Close the file
-	fclose(stream);
-
-	return 0x1;
-}
-
 
 /* 
  *	English letter frequencies in count per ten thousand
@@ -57,9 +24,63 @@ static const float en_letter_count[] =
 /*   V,        W,        X,       Y,         Z,      Space,      Other */ 
 0.0082903,0.0171272, 0.0013692,0.0145984,0.0007836, 0.1918182, 0.0651738
 
-
 };
 
+/* 
+ *  Hamming distance score data structure for comparison
+ */
+struct key_hscore
+{
+	unsigned int key;
+	float score;
+};
+
+/* 
+ *  Comparison function used in the Hamming distance test
+ */
+int hscore_compare (const void *a, const void *b)
+{
+	/* 4-decimal 'accuracy' */
+	return 1000*(((struct key_hscore*)a) -> score - ((struct key_hscore*)b ) -> score);
+}
+
+/*
+ *   Load the next line of the filestream
+ */
+unsigned load_file(char *fd_stream,	char **contents, size_t *contents_size)
+{
+	FILE *stream;
+	unsigned int fileSize = 0;
+	void *p;
+
+	/* Open the stream. Note "b" to avoid DOS/UNIX new line conversion. */
+	stream = fopen(fd_stream, "rb");
+
+	/* Seek to the end of the file to determine the file size */
+	fseek(stream, 0L, SEEK_END);
+	fileSize = ftell(stream);
+	fseek(stream, 0L, SEEK_SET);
+
+	/* Allocate enough memory (add 1 for the \0, since fread won't add it) */
+	p = malloc(fileSize+1);
+	if( NULL == p)
+		return 0x00;
+	(*contents) = (char*) p;
+
+	/* Read the file */
+	*contents_size=fread((*contents),1,fileSize,stream) + 1;
+	(*contents)[*contents_size]=0; // Add terminating zero.
+
+	/* Close the file */
+	fclose(stream);
+
+	return 0x1;
+}
+
+/*
+ *  Estimate the single key character used to encrypt the line, 
+ *  based on the ciphertexts's letters frequencies.
+ */
 unsigned char detect_key_single_line(char *lencdata, size_t llen)
 {
 	int i, c;
@@ -72,7 +93,7 @@ unsigned char detect_key_single_line(char *lencdata, size_t llen)
 	{
 		memset(letter_count, 0, sizeof(letter_count));
 
-		// Letter frequency
+		/* Letter frequency */
 		for (i = 0; i < llen; i++)
 		{
 			img = lencdata[i] ^ c;
@@ -86,7 +107,7 @@ unsigned char detect_key_single_line(char *lencdata, size_t llen)
 				letter_count[27] += 1;
 		}
 
-		// Square error
+		/* min Square error */
 		score = 0;
 		for (i = 0; i < 28; i++)
 			score += (letter_count[i] - llen*en_letter_count[i]) * (letter_count[i] - llen*en_letter_count[i]);
@@ -101,19 +122,6 @@ unsigned char detect_key_single_line(char *lencdata, size_t llen)
 	return retv;
 }
 
-struct key_hscore
-{
-	unsigned int key;
-	float score;
-};
-/* 
- *
- */
-int hscore_compare (const void *a, const void *b)
-{
-	// 4-decimal "précision"
-	return 1000*(((struct key_hscore*)a) -> score - ((struct key_hscore*)b ) -> score);
-}
 
 /*
  *  Detect the key length by computing hamming distance on several block
@@ -160,7 +168,9 @@ unsigned int find_keysize(char* encdat, unsigned int encdatalen, unsigned int* e
 
 
 
-
+/* 
+ *  Use : bin/06.exe encoded.txt > result.txt
+ */
 int main(int argc, char *argv[])
 {
 	
@@ -200,7 +210,7 @@ int main(int argc, char *argv[])
 	 *	Keysize determination
 	 */
 	unsigned int keysizes[5];
-	if (find_keysize((char*) encdata, encdatalen, keysizes, 5, 2,50))
+	if (find_keysize((char*) encdata, encdatalen, keysizes, 5, 2, 50))
 	{
 		free(encdata);
 		return 0x2;
