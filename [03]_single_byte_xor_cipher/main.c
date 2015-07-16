@@ -1,10 +1,17 @@
-#include "../tools/ifreq.h"
-#include "../tools/xor.h"
+#include "ifreq.h"
+#include "xor.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
+
+/*
+ * The input file's line length is defined here : it's easier that way than 
+ * to open the file, detect the return char in order to compute the line lengths.
+ */
+#define INPUT_FILE_LINE_LENGTH (34)
 
 
 /*
@@ -42,35 +49,43 @@ unsigned char detect_key_single_line(unsigned char *lencdata, size_t llen)
 }
 
 
-// Usage :  decode.EXEC cipher_text > result.
+/*
+ *  Usage :  decode.EXEC cipher_text > result.
+ */
 int main (int argc, char *argv[])
 {
-	unsigned char 	cipher_buf[34] = {0},
-				decoded_cipher[34] = {0};	
+	FILE  *cipher;
+	unsigned char sp_img;
+	unsigned char 	cipher_buf[INPUT_FILE_LINE_LENGTH] = {0},
+				decoded_cipher[INPUT_FILE_LINE_LENGTH] = {0};	
 	
+
 	if (argc < 2)
 		return 0x1;
 
 	/*
 	 * 	 Init
 	 */
-	FILE  *cipher = fopen(argv[1], "rb");
-	if ( NULL == cipher)
-		return 0x1;
+	cipher = fopen(argv[1], "rb");
+	if (NULL == cipher)
+	{
+		printf("Error when calling fopen(%s) : %s\n", argv[1], strerror(errno));
+		return errno;
+	}
 
-	if (!fread(&cipher_buf, 34 , sizeof(char), cipher))
+	if (INPUT_FILE_LINE_LENGTH != fread(&cipher_buf, 1, INPUT_FILE_LINE_LENGTH, cipher))
 	{
 		fclose(cipher);
-		return 1;
+		return errno;
 	}
 
 
 	/* 
 	 *  Hypothesiss:  " " is the most frequent char in the ciphertext
 	 */
-	unsigned char sp_img = detect_key_single_line(cipher_buf, sizeof(cipher_buf)/sizeof(cipher_buf[0]));
-	decode_cipher(cipher_buf, decoded_cipher, sizeof(cipher_buf)/sizeof(cipher_buf[0]), ' ' ^ sp_img);
-	write(1, decoded_cipher, sizeof(decoded_cipher)/sizeof(decoded_cipher[0]));
+	sp_img = detect_key_single_line(cipher_buf, INPUT_FILE_LINE_LENGTH);
+	decode_cipher(cipher_buf, decoded_cipher, INPUT_FILE_LINE_LENGTH, ' ' ^ sp_img);
+	write(STDOUT_FILENO, decoded_cipher, INPUT_FILE_LINE_LENGTH);
 	printf("\n");
 
 	/*
