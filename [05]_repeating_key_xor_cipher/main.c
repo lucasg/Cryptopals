@@ -3,22 +3,28 @@
 #include <unistd.h>
 #include <string.h>
 
-// Use :  vigenere.out KEY < input.txt > output
+/* 
+ * Use :  vigenere.out KEY < input.txt > output
+ */
 int main(int argc, char *argv[])
 {
+	char *key;
+	unsigned char decrypted, encrypted;
+	size_t key_idx = 0, key_len;
+
 	if(argc < 2)
 		return 1;
 
-	char *key = argv[1];
-	unsigned int key_idx = 0, key_len = strlen(key);
+	key = argv[1];
+	key_len = strlen(key);
 
-	unsigned char dchar,echar;
-	while(read(0,&dchar,1))
+	while (read(STDIN_FILENO, &decrypted, 1))
 	{
-		echar = dchar ^ key[key_idx];
-		write(1, &echar,1 );
+		encrypted = decrypted ^ key[key_idx];
+		write(STDOUT_FILENO, &encrypted, 1);
+
 		key_idx = (key_idx+1) % key_len;
 	}
 
-	return 0;
+	return 0x00;
 }
