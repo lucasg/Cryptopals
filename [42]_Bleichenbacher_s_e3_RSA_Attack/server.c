@@ -45,9 +45,7 @@ int server_validate_signature(const mpz_t signature)
 {
 	char *msg, p_msg[RSA_SIGN_BLOCK_LEN];
 	int msg_valid;
-	size_t msg_len, i;
-
-
+	size_t msg_len;
 
 
 	/* 
@@ -63,12 +61,12 @@ int server_validate_signature(const mpz_t signature)
 
 	/*
 	 * GMP strip any leading 0-value (since it has no meaning as a number repr).
-	 * So we need to add one in order to pass the validation.
+	 * Right-align the input message to retrieve any leading zeroes
 	 */
 	memset(p_msg, 0, RSA_SIGN_BLOCK_LEN);
-	memcpy(p_msg + 1, msg, msg_len);
+	memcpy(p_msg + (RSA_SIGN_BLOCK_LEN - msg_len), msg, msg_len);
 
-	msg_valid = pkcs1_v1_5_insecure_validate(p_msg, msg_len + 1, store.h_val, store.h_len);
+	msg_valid = pkcs1_v1_5_insecure_validate(p_msg, RSA_SIGN_BLOCK_LEN, store.h_val, store.h_len);
 	free(msg);
 
 
