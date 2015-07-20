@@ -1,5 +1,7 @@
 ## RSA parity oracle
 
+[Source](http://cryptopals.com/sets/6/challenges/46/)
+
 Generate a 1024 bit RSA key pair.
 
 Write an oracle function that uses the private key to answer the question "is the plaintext of this message even or odd" (is the last bit of the message 0 or 1). Imagine for instance a server that accepted RSA-encrypted messages and checked the parity of their decryption to validate them, and spat out an error if they were of the wrong parity.

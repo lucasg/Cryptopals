@@ -1,5 +1,7 @@
 ## Bleichenbacher's e=3 RSA Attack
 
+[Source](http://cryptopals.com/sets/6/challenges/42/)
+
 RSA with an encrypting exponent of 3 is popular, because it makes the RSA math faster.
 
 With e=3 RSA, encryption is just cubing a number mod the public encryption modulus:

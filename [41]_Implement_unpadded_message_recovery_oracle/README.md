@@ -1,5 +1,7 @@
 ## Implement unpadded message recovery oracle
 
+[Source](http://cryptopals.com/sets/6/challenges/41/)
+
 Nate Lawson says we should stop calling it "RSA padding" and start calling it "RSA armoring". Here's why.
 
 Imagine a web application, again with the Javascript encryption, taking RSA-encrypted messages which (again: Javascript) aren't padded before encryption at all.

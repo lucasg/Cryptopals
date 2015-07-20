@@ -44,68 +44,69 @@ Caveat : challenge `#31 & #32` can't be called from the top-level Makefile since
 
 ## Set 1
 
-  - [X] [Convert hex to base64](http://cryptopals.com/sets/1/challenges/1/)
-  - [X] [Fixed XOR](http://cryptopals.com/sets/1/challenges/2/)
-  - [X] [Single-byte XOR cipher](http://cryptopals.com/sets/1/challenges/3/)
-  - [X] [Detect single-character XOR](http://cryptopals.com/sets/1/challenges/4/)
-  - [X] [Implement repeating-key XOR](http://cryptopals.com/sets/1/challenges/5/)
-  - [X] [Break repeating-key XOR](http://cryptopals.com/sets/1/challenges/6/)
-  - [X] [AES in ECB mode](http://cryptopals.com/sets/1/challenges/7/)
-  - [X] [Detect AES in ECB mode](http://cryptopals.com/sets/1/challenges/8/)
+  - [X] [Convert hex to base64]([01]_base64/)
+  - [X] [Fixed XOR]([02]_fixed_xor/)
+  - [X] [Single-byte XOR cipher]([03]_single_byte_xor_cipher/)
+  - [X] [Detect single-character XOR]([04]_detect_single_character_xor/)
+  - [X] [Implement repeating-key XOR]([05]_repeating_key_xor_cipher/)
+  - [X] [Break repeating-key XOR]([06]_break_repeat_key_cipher/)
+  - [X] [AES in ECB mode]([07]_AES_in_ECB_mode/)
+  - [X] [Detect AES in ECB mode]([08]_detect_AES_in_ECB_mode/)
 
 ## Set 2
 
-  - [X] [Implement PKCS#7 padding](http://cryptopals.com/sets/2/challenges/9/)
-  - [X] [Implement CBC mode](http://cryptopals.com/sets/2/challenges/10/)
-  - [X] [An ECB/CBC detection oracle](http://cryptopals.com/sets/2/challenges/11/)
-  - [X] [Byte-at-a-time ECB decryption (Simple)](http://cryptopals.com/sets/2/challenges/12/)
-  - [X] [ECB cut-and-paste](http://cryptopals.com/sets/2/challenges/13/)
-  - [X] [Byte-at-a-time ECB decryption (Harder)](http://cryptopals.com/sets/2/challenges/14/)
-  - [X] [PKCS#7 padding validation](http://cryptopals.com/sets/2/challenges/15/)
-  - [X] [CBC bitflipping attacks](http://cryptopals.com/sets/2/challenges/16/)
+  - [X] [Implement PKCS#7 padding]([09]_PCKS_#7_padding/)
+  - [X] [Implement CBC mode]([10]_AES_in_CBC_mode/)
+  - [X] [An ECB/CBC detection oracle]([11]_AES_ECB_detection_oracle/)
+  - [X] [Byte-at-a-time ECB decryption (Simple)]([12]_Byte-at-a-time_ECB_decryption_(Simple)/)
+  - [X] [ECB cut-and-paste]([13]_ECB_cut_and_paste/)
+  - [X] [Byte-at-a-time ECB decryption (Harder)]([14]_Byte-at-a-time_ECB_decryption_(Harder)/)
+  - [X] [PKCS#7 padding validation]([15]_PKCS_#7_padding_validation/)
+  - [X] [CBC bitflipping attacks]([16]_CBC_bitflipping_attacks/)
 
 ## Set 3
 
-  - [X] [The CBC padding oracle](http://cryptopals.com/sets/3/challenges/17/)
-  - [X] [Implement CTR, the stream cipher mode](http://cryptopals.com/sets/3/challenges/18/)
-  - [X] [Break fixed-nonce CTR mode using substitions](http://cryptopals.com/sets/3/challenges/19/)
-  - [X] [Break fixed-nonce CTR statistically](http://cryptopals.com/sets/3/challenges/20/)
-  - [X] [Implement the MT19937 Mersenne Twister RNG](http://cryptopals.com/sets/3/challenges/21/)
-  - [X] [Crack an MT19937 seed](http://cryptopals.com/sets/3/challenges/22/)
-  - [X] [Clone an MT19937 RNG from its output](http://cryptopals.com/sets/3/challenges/23/)
-  - [X] [Create the MT19937 stream cipher and break it](http://cryptopals.com/sets/3/challenges/24/)
+  - [X] [The CBC padding oracle]([17]_CBC_padding_oracle/)
+  - [X] [Implement CTR, the stream cipher mode]([18]_AES_in_CTR_mode/)
+  - [X] [Break fixed-nonce CTR mode using substitions]([19]_break_AES_in_CTR_mode_manually/)
+  - [X] [Break fixed-nonce CTR statistically]([20]_break_AES_in_CTR_mode_statistically/)
+  - [X] [Implement the MT19937 Mersenne Twister RNG]([21]_Implement_the_MT19937_Mersenne_Twister_RNG/)
+  - [X] [Crack an MT19937 seed]([22]_Crack_an_MT19937_seed/)
+  - [X] [Clone an MT19937 RNG from its output]([23]_Clone_an_MT19937_RNG/)
+  - [X] [Create the MT19937 stream cipher and break it]([24]_Create_the_MT19937_stream_cipher_and_break_it/)
 
 ## Set 4
 
-  - [X] [Break "random access read/write" AES CTR](http://cryptopals.com/sets/4/challenges/25/)
-  - [X] [CTR bitflipping](http://cryptopals.com/sets/4/challenges/26/)
-  - [X] [Recover the key from CBC with IV=Key](http://cryptopals.com/sets/4/challenges/27/)
-  - [X] [Implement a SHA-1 keyed MAC](http://cryptopals.com/sets/4/challenges/28/)
-  - [X] [Break a SHA-1 keyed MAC using length extension](http://cryptopals.com/sets/4/challenges/29/)
-  - [X] [Break an MD4 keyed MAC using length extension](http://cryptopals.com/sets/4/challenges/30/)
-  - [X] [Implement and break HMAC-SHA1 with an artificial timing leak](http://cryptopals.com/sets/4/challenges/31/)
-  - [X] [Break HMAC-SHA1 with a slightly less artificial timing leak](http://cryptopals.com/sets/4/challenges/32/)  
+  - [X] [Break "random access read/write" AES CTR]([25]_Break_RARW_AES_CTR/)
+  - [X] [CTR bitflipping]([26]_CTR_bitflipping_attack/)
+  - [X] [Recover the key from CBC with IV=Key]([27]_Recover_the_key_from_CBC_with_IV_eq_Key/)
+  - [X] [Implement a SHA-1 keyed MAC]([28]_Implement_a_SHA-1_keyed_MAC/)
+  - [X] [Break a SHA-1 keyed MAC using length extension]([29]_Break_SHA-1_keyed_MAC_using_length_extension/)
+  - [X] [Break an MD4 keyed MAC using length extension]([30]_Break_a_MD4_keyed_MAC_using_length_extension/)
+  - [X] [Implement and break HMAC-SHA1 with an artificial timing leak]([31]_Implement_and_break_HMAC_SHA1_with_an_artificial_timing_leak/)
+  - [X] [Break HMAC-SHA1 with a slightly less artificial timing leak]([32]_Break_HMAC_SHA1_with_a_slightly_less_artificial_timing_leak/) 
     - This challenge works only on Linux (Arch Linux & Mint tested).
 
 ## Set 5
 
-  - [X] [Implement Diffie-Hellman](http://cryptopals.com/sets/5/challenges/33)
-  - [X] [Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection](http://cryptopals.com/sets/5/challenges/34)
-  - [X] [Implement DH with negotiated groups, and break with malicious "g" parameters](http://cryptopals.com/sets/5/challenges/35)
-  - [X] [Implement Secure Remote Password (SRP)](http://cryptopals.com/sets/5/challenges/36)
-  - [X] [Break SRP with a zero key](http://cryptopals.com/sets/5/challenges/37)
-  - [X] [Offline dictionary attack on simplified SRP](http://cryptopals.com/sets/5/challenges/38)
-  - [x] [Implement RSA](http://cryptopals.com/sets/5/challenges/39)
-  - [X] [Implement an E=3 RSA Broadcast attack](http://cryptopals.com/sets/5/challenges/40)
+  - [X] [Implement Diffie-Hellman]([33]_Implement_Diffie_Hellman/)
+  - [X] [Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection]([34]_MITM_attack_on_Diffie-Hellman_with_parameter_injection/)
+  - [X] [Implement DH with negotiated groups, and break with malicious "g" parameters]([35]_Implement_DH_with_negotiated_groups_and_break_with_malicious_g_parameters/)
+    - Done on paper only
+  - [X] [Implement Secure Remote Password (SRP)]([36]_Implement_Secure_Remote_Password_SRP/)
+  - [X] [Break SRP with a zero key]([37]_Break_SRP_with_a_zero_key/)
+  - [X] [Offline dictionary attack on simplified SRP]([38]_Offline_dictionary_attack_on_simplified_SRP/)
+  - [x] [Implement RSA]([39]_Implement_RSA/)
+  - [X] [Implement an E=3 RSA Broadcast attack]([40]_Implement_an_E3_Broadcast_attack/)
 
 ## Set 6
 
-  - [X] [Implement unpadded message recovery oracle](http://cryptopals.com/sets/6/challenges/41)
-  - [x] [Bleichenbacher's e=3 RSA Attack](http://cryptopals.com/sets/6/challenges/42)
+  - [X] [Implement unpadded message recovery oracle]([41]_Implement_unpadded_message_recovery_oracle/)
+  - [x] [Bleichenbacher's e=3 RSA Attack]([42]_Bleichenbacher_s_e3_RSA_Attack/)
   - [ ] [DSA key recovery from nonce](http://cryptopals.com/sets/6/challenges/43)
   - [ ] [DSA nonce recovery from repeated nonce](http://cryptopals.com/sets/6/challenges/44)
   - [ ] [DSA parameter tampering](http://cryptopals.com/sets/6/challenges/45)
-  - [x] [RSA parity oracle](http://cryptopals.com/sets/6/challenges/46)
+  - [x] [RSA parity oracle]([46]_RSA_parity_oracle/)
   - [ ] [Bleichenbacher's PKCS 1.5 Padding Oracle (Simple Case)](http://cryptopals.com/sets/6/challenges/47)
   - [ ] [Bleichenbacher's PKCS 1.5 Padding Oracle (Complete Case)](http://cryptopals.com/sets/6/challenges/48)
 
@@ -119,6 +120,11 @@ Caveat : challenge `#31 & #32` can't be called from the top-level Makefile since
   - [ ] [Kelsey and Kohno's Nostradamus Attack](http://cryptopals.com/sets/7/challenges/54)
   - [ ] [MD4 Collisions](http://cryptopals.com/sets/7/challenges/55)
   - [ ] [RC4 Single-Byte Biases](http://cryptopals.com/sets/7/challenges/56)
+
+
+
+
+
 
 ---
 
