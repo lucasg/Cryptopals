@@ -5,8 +5,11 @@
 To understand SRP, look at how you generate an AES key from DH; now, just observe you can do the "opposite" operation an generate a numeric parameter from a hash. Then:
 
 Replace A and B with C and S (client & server)
+
 **C & S**
+
     Agree on N=[NIST Prime], `g=2`, `k=3`, I (email), P (password)
+    
 **S**
 
  1. Generate salt as random integer
@@ -16,11 +19,17 @@ Replace A and B with C and S (client & server)
  5. Save everything but `x`, `xH`
 
 **C->S**
+
     Send I, `A=g**a % N`(a la Diffie Hellman)
+    
 **S->C**
-    Send salt, `B=kv + g**b % N`
+
+    Send salt, `B=kv + g**b % N`.
+    
 **S, C**
+
     Compute string `uH = SHA256(A|B)`, `u = integer of uH`
+    
 **C**
 
  1. Generate string `xH=SHA256(salt|password)`
@@ -34,8 +43,11 @@ Replace A and B with C and S (client & server)
  2. Generate `K = SHA256(S)`
 
 **C->S**
+
     Send `HMAC-SHA256(K, salt)`
+    
 **S->C**
+
     Send "OK" if `HMAC-SHA256(K, salt)` validates
 
 You're going to want to do this at a REPL of some sort; it may take a couple tries.
