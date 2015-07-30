@@ -1,5 +1,6 @@
 ## Bleichenbacher's PKCS 1.5 Padding Oracle (Simple Case)
 
+[Source](http://cryptopals.com/sets/6/challenges/47/)
 
 Read the Bleichenbacher paper from CRYPTO '98 . It describes a padding oracle attack on PKCS#1v1.5. The attack is similar in spirit to the CBC padding oracle you built earlier; it's an "adaptive chosen ciphertext attack", which means you start with a valid ciphertext and repeatedly corrupt it, bouncing the adulterated ciphertexts off the target to learn things about the original.
 
