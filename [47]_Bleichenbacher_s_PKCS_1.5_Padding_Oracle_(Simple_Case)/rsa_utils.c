@@ -173,8 +173,6 @@ int rsa_encrypt_msg(mpz_t *c, const mpz_t n, const mpz_t e,  const char *secret,
 		return 0x01;
 	}
 
-	printf("[DEBUG] secret message : %s \n", mpz_get_str(NULL, 16, m));
-
 	rsa_encrypt(c, m, n , e);
 
 	/* Memory release */

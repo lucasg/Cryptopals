@@ -107,12 +107,34 @@ int update_b(mpz_t b, const mpz_t r, const mpz_t s, const mpz_t two_B, const mpz
 	return 0x00;
 }
 
+/*
+ *  Check server padding for ciphertext "c*(s**e)".
+ */
+int check_padding(const mpz_t s, const mpz_t c, const mpz_t e, const mpz_t n)
+{
+	int pad_check;
+	mpz_t s_e, c_s_e;
+
+	mpz_init(s_e);
+	mpz_init(c_s_e);
+
+		
+	mpz_powm(s_e, s, e, n);
+	mpz_mul(c_s_e, c, s_e);
+	pad_check = server_check_padding(c_s_e);
+
+	mpz_clear(c_s_e);
+	mpz_clear(s_e);
+
+	return pad_check;
+}
+
 int main (int argc, char *argv[])
 {
-	int up_a, up_b;
+	size_t dig;
 	int pad_check, i;
 	mpz_t min_r, max_r;
-	mpz_t n, e, c, c_s_e,  s,s_e, s0, s0_i, diff, min_s, max_s;
+	mpz_t n, e, c, cc, s, s0, s0_i, diff, min_s, max_s;
 	mpz_t a,b, B, two, two_B, three_B,  B_exp, r;
 	mpz_t m;
 
@@ -121,8 +143,8 @@ int main (int argc, char *argv[])
 		printf("Error while initializing server\n");
 		return -1;	
 	}
-	printf("[DEBUG] n : %s\n", mpz_get_str(NULL, 16, n));
-	printf("[DEBUG] e : %s\n", mpz_get_str(NULL, 16, e));
+	/*printf("[DEBUG] n : %s\n", mpz_get_str(NULL, 16, n));
+	printf("[DEBUG] e : %s\n", mpz_get_str(NULL, 16, e));*/
  
 	/*  
 	 *  Unit-testing the whole signing and validating process
@@ -165,18 +187,10 @@ int main (int argc, char *argv[])
 
 
 	pad_check = 0x00;
-	while(!pad_check /*&& mpz_cmp(s, max_s) < 0*/)
+	while(!pad_check)
 	{
-		mpz_init(s_e);
-		mpz_init(c_s_e);
-
 		mpz_add_ui(s, s, 1);
-		mpz_powm(s_e, s, e, n);
-		mpz_mul(c_s_e, c, s_e);
-		pad_check = server_check_padding(c_s_e);
-
-		mpz_clear(s_e);
-		mpz_clear(c_s_e);
+		pad_check = check_padding(s, c, e, n);
 	}
 	mpz_init_set(s0, s);
 
@@ -193,8 +207,8 @@ int main (int argc, char *argv[])
 	mpz_sub(max_r, max_r, two_B);
 	mpz_fdiv_q (max_r, max_r, n);
 	
-	printf("[DEBUG] min_r : %s\n", mpz_get_str(NULL, 16, min_r));
-	printf("[DEBUG] max_r : %s\n", mpz_get_str(NULL, 16, max_r));
+/*	printf("[DEBUG] min_r : %s\n", mpz_get_str(NULL, 16, min_r));
+	printf("[DEBUG] max_r : %s\n", mpz_get_str(NULL, 16, max_r));*/
 	
 
 	/* Step 2.c: Searching with one interval left. */
@@ -202,24 +216,25 @@ int main (int argc, char *argv[])
 	pad_check = 0x00;
 	while (0x00 != mpz_cmp(a, b))
 	{
-		/*mpz_init_set(r, min_r);
-
-		while (!pad_check && mpz_cmp(r, max_r) <= 0 )
-		{
-		*/
 		update_a(a, min_r, s, two_B, three_B,  n );
 		update_b(b, max_r, s, two_B, three_B, n );
 
 
-		printf("(a : %s)\n", mpz_get_str(NULL, 16, a));
-		printf("(b : %s)\n", mpz_get_str(NULL, 16, b));
+/*		printf("(a : %s)\n", mpz_get_str(NULL, 16, a));
+		printf("(b : %s)\n", mpz_get_str(NULL, 16, b));*/
 		
 		mpz_init_set(diff, b);
 		mpz_sub(diff, diff,  a);
-		printf("Range (%d) : %s \n", i, mpz_get_str(NULL, 16, diff));
-
 		if (0 == mpz_cmp_ui(diff, 1))
 			break;
+
+		printf("Range digits (iter : %02d) : ", i);
+		for (dig  = 0; dig < mpz_sizeinbase (diff, 10); dig++)
+			printf("#");
+		printf("\n");
+
+		mpz_clear(diff);
+
 
 		/* Error : negative range */
 		if (mpz_cmp(a,b) < 0)
@@ -230,31 +245,12 @@ int main (int argc, char *argv[])
 			{
 				compute_min_s(&min_s, r, b, two_B, n);
 				compute_max_s(&max_s, r, a, three_B, n);
-
-				mpz_init(s_e);
-				mpz_init(c_s_e);
+				
 				mpz_set(s, min_s);
-
-				mpz_powm(s_e, s, e, n);
-				mpz_mul(c_s_e, c, s_e);
-				pad_check = server_check_padding(s);
-				mpz_clear(s_e);
-				mpz_clear(c_s_e);
-
 				while (mpz_cmp(s, max_s) < 0 && 0x1 != pad_check)
 				{
-					/*mpz_add_ui(s, s, 1);
-					pad_check = server_check_padding(s);*/
-					mpz_init(s_e);
-					mpz_init(c_s_e);
-
 					mpz_add_ui(s, s, 1);
-					mpz_powm(s_e, s, e, n);
-					mpz_mul(c_s_e, c, s_e);
-					pad_check = server_check_padding(c_s_e);
-
-					mpz_clear(s_e);
-					mpz_clear(c_s_e);
+					pad_check = check_padding(s, c, e, n);
 				}
 
 				/* solution found */
@@ -268,8 +264,8 @@ int main (int argc, char *argv[])
 				mpz_clear(min_s);
 				mpz_clear(max_s);
 			}
-			printf("[DEBUG] s : %s \n", mpz_get_str(NULL, 16, s));
-			printf("[DEBUG] r : %s\n", mpz_get_str(NULL, 16, r));
+			/*printf("[DEBUG] s : %s \n", mpz_get_str(NULL, 16, s));
+			printf("[DEBUG] r : %s\n", mpz_get_str(NULL, 16, r));*/
 
 			/*printf("Ran out of space\n");*/
 			if (pad_check)
@@ -297,67 +293,47 @@ int main (int argc, char *argv[])
 					mpz_set(max_r, r);
 				}
 				
-				printf("[DEBUG] min_r : %s\n", mpz_get_str(NULL, 16, min_r));
-				printf("[DEBUG] max_r : %s\n", mpz_get_str(NULL, 16, max_r));
-
-				/*up_a = 0x00;
-				up_b = 0x00;
-				mpz_set(r, min_r);
-				while (!up_a && mpz_cmp(r, max_r) <= 0)
-				{
-					up_a = update_a(a, r, s, two_B, n );
-					mpz_add_ui(r, r, 1);
-				}
-
-				mpz_set(r, max_r);
-				while (!up_b && mpz_cmp(r, min_r) >= 0)
-				{
-					if (!up_b)	
-						up_b = update_b(b, r, s, three_B, n );
-				
-					mpz_sub_ui(r, r, 1);
-				}*/
+				/*printf("[DEBUG] min_r : %s\n", mpz_get_str(NULL, 16, min_r));
+				printf("[DEBUG] max_r : %s\n", mpz_get_str(NULL, 16, max_r));*/
 			}
 		
 
 			if (!pad_check)
-				printf("[DEBUG] wrong domain\n");
+				break;
 
 			mpz_add_ui(r, r, 1);	
 		}
 
+
 		if (!pad_check)
 		{
-			printf("[DEBUG] Error\n");
-			return 0x01;
+			printf("Wrong search space : [%s,%s] \n",  mpz_get_str(NULL, 16, a),  mpz_get_str(NULL, 16, b));
+			goto cleanup;
 		}
 
 		pad_check = 0x00;
 		mpz_clear(r);
-/*		mpz_clear(min_r);
-		mpz_clear(max_r);	*/
 	}
 
 
-/*	/ Step 4: Computing the solution. /
-	mpz_invmod(&s0_i, s0, n);
-	mpz_mul(m, s0_i, a);*/
-
-	rsa_encrypt(&s_e, a, n, e);
-	if (0 == mpz_cmp(s_e, c))
+/*	/ Step 4: Computing the solution. */
+	rsa_encrypt(&cc, a, n, e);
+	if (0 == mpz_cmp(cc, c))
+	{
 		printf("[DEBUG] m :  %s\n", mpz_get_str(NULL, 16, a));
+	}
 	else 
 	{
-		mpz_clear(s_e);
-		rsa_encrypt(&s_e, b, n, e);
-		if (0 == mpz_cmp(s_e, c))
+		mpz_clear(cc);
+		rsa_encrypt(&cc, b, n, e);
+		if (0 == mpz_cmp(cc, c))
 			printf("[DEBUG] m :  %s\n", mpz_get_str(NULL, 16, b));
 		else
 			printf("[DEBUG] Error\n");
 	}
-	mpz_clear(s_e);
+	mpz_clear(cc);
 
-
+cleanup:
 	server_cleanup();
 	mpz_clear(c);
 	mpz_clear(n);
