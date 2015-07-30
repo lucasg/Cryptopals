@@ -10,9 +10,58 @@
 
 const static char secret_plaintext[] = "Let's kick it !";
 
-int compute_min_r(mpz_t *r, const mpz_t s_1, const mpz_t b, const  mpz_t min_range, const  mpz_t n )
+#define FRAC_ADD (0x0)
+#define FRAC_SUB (0x1)
+
+/*
+ * Compute (ax +/- b)/d
+ */
+int compute_frac(mpz_t result, const mpz_t a, const mpz_t x, const mpz_t b, const mpz_t d, int sign)
 {
 	mpz_t num_tmp;
+
+	mpz_init(num_tmp);
+	mpz_mul(num_tmp, a, x);
+
+	switch (sign)
+	{
+	case FRAC_ADD:
+		mpz_add(num_tmp, num_tmp, b);
+		break;
+	case FRAC_SUB:
+		mpz_sub(num_tmp, num_tmp, b);
+		break;
+	default:
+		mpz_clear(num_tmp);
+		return -1;
+	}
+
+	mpz_tdiv_q (result, num_tmp, d);
+
+	mpz_clear(num_tmp);
+	return 0x00;
+}
+
+/*
+ * Compute (ax + b)/d
+ */
+int compute_frac_add(mpz_t result, const mpz_t a, const mpz_t x, const mpz_t b, const mpz_t d)
+{
+	
+	return compute_frac(result, a, x, b, d, FRAC_ADD);
+}
+
+/*
+ * Compute (ax - b)/d
+ */
+int compute_frac_sub(mpz_t result, const mpz_t a, const mpz_t x, const mpz_t b, const mpz_t d)
+{
+	return compute_frac(result, a, x, b, d, FRAC_SUB);
+}
+
+int compute_min_r(mpz_t *r, const mpz_t s_1, const mpz_t b, const  mpz_t min_range, const  mpz_t n )
+{
+/*	mpz_t num_tmp;
 
 	mpz_init(num_tmp);
 	mpz_mul(num_tmp, b, s_1);
@@ -22,14 +71,19 @@ int compute_min_r(mpz_t *r, const mpz_t s_1, const mpz_t b, const  mpz_t min_ran
 	mpz_tdiv_q (*r, num_tmp, n);
 	mpz_mul_ui(*r, *r, 2);
 
-	mpz_clear(num_tmp);
+	mpz_clear(num_tmp);*/
+	int frac_retcode;
 
-	return 0x00;
+	mpz_init(*r);
+	frac_retcode = compute_frac_sub(*r, b, s_1, min_range, n);
+	mpz_mul_ui(*r, *r, 2);
+
+	return frac_retcode;
 }
 
 int compute_min_s(mpz_t *min_s, const mpz_t r_1, const mpz_t b, const mpz_t min_range, const mpz_t n )
 {
-	mpz_t num_tmp;
+	/*mpz_t num_tmp;
 
 	mpz_init(num_tmp);
 	mpz_mul(num_tmp, r_1, n);
@@ -41,7 +95,10 @@ int compute_min_s(mpz_t *min_s, const mpz_t r_1, const mpz_t b, const mpz_t min_
 	mpz_clear(num_tmp);
 
 
-	return 0x00;
+	return 0x00;*/
+
+	mpz_init(*min_s);
+	return compute_frac_add(*min_s, r_1, n, min_range, b);
 }
 
 int compute_max_s(mpz_t *max_s, const mpz_t r_1, const mpz_t a, const mpz_t max_range, const mpz_t n )
@@ -207,7 +264,7 @@ int main (int argc, char *argv[])
 		return -1;	
 	}
 	/*printf("[DEBUG] n : %s\n", mpz_get_str(NULL, 16, n));
-	printf("[DEBUG] e : %s\n", mpz_get_str(NULL, 16, e));*/
+	  printf("[DEBUG] e : %s\n", mpz_get_str(NULL, 16, e));*/
  
 	/*  
 	 *  Unit-testing the whole signing and validating process
@@ -234,7 +291,7 @@ int main (int argc, char *argv[])
 	mpz_init(two_B);
 	mpz_init(three_B);
 	mpz_init_set_ui(two, 2);
-	mpz_init_set_ui(B_exp, 8*(32 - 2));
+	mpz_init_set_ui(B_exp, 8*(SERVER_RSA_BLOCK_LEN - 2));
 	mpz_powm(B, two, B_exp, n);
 
 	mpz_mul_ui(two_B, B, 2);	
@@ -245,8 +302,8 @@ int main (int argc, char *argv[])
 	mpz_init_set(b, three_B);
 
 	/* Step 2.a : Starting the search. */
-	mpz_init_set(s, n);
-	mpz_cdiv_q (s, s, three_B);
+	mpz_init(s);
+	mpz_cdiv_q (s, n, three_B);
 
 
 	pad_check = 0x00;
@@ -272,17 +329,17 @@ int main (int argc, char *argv[])
 	
 /*	printf("[DEBUG] min_r : %s\n", mpz_get_str(NULL, 16, min_r));
 	printf("[DEBUG] max_r : %s\n", mpz_get_str(NULL, 16, max_r));*/
+
+	update_a(a, min_r, s, two_B, three_B, n );
+	update_b(b, max_r, s, two_B, three_B, n );
+
 	
 
 	/* Step 2.c: Searching with one interval left. */
 	i = 1;
 	pad_check = 0x00;
-	while (0x00 != mpz_cmp(a, b))
+	while (0x00 < mpz_cmp(b, a))
 	{
-		update_a(a, min_r, s, two_B, three_B,  n );
-		update_b(b, max_r, s, two_B, three_B, n );
-
-
 /*		printf("(a : %s)\n", mpz_get_str(NULL, 16, a));
 		printf("(b : %s)\n", mpz_get_str(NULL, 16, b));*/
 		
@@ -291,84 +348,73 @@ int main (int argc, char *argv[])
 		if (0 == mpz_cmp_ui(diff, 1))
 			break;
 
-		printf("Range digits (iter : %02d) : ", i);
+		printf("Range digits (iter : %04d) : ", i);
 		for (dig  = 0; dig < mpz_sizeinbase (diff, 10); dig++)
 			printf("#");
 		printf("\n");
 
 		mpz_clear(diff);
 
-
-		/* Error : negative range */
-		if (mpz_cmp(a,b) < 0)
-		{	
-
-			compute_min_r(&r, s, b, two_B, n);
-			while (0x01 != pad_check && mpz_cmp(r, three_B) <= 0)
+		
+		compute_min_r(&r, s, b, two_B, n);
+		while (0x01 != pad_check && mpz_cmp(r, three_B) <= 0)
+		{
+			compute_min_s(&min_s, r, b, two_B, n);
+			compute_max_s(&max_s, r, a, three_B, n);
+			
+			mpz_set(s, min_s);
+			while (mpz_cmp(s, max_s) < 0 && 0x1 != pad_check)
 			{
-				compute_min_s(&min_s, r, b, two_B, n);
-				compute_max_s(&max_s, r, a, three_B, n);
-				
-				mpz_set(s, min_s);
-				while (mpz_cmp(s, max_s) < 0 && 0x1 != pad_check)
-				{
-					mpz_add_ui(s, s, 1);
-					pad_check = check_padding(s, c, e, n);
-				}
-
-				/* solution found */
-				if (pad_check)
-				{
-					i++;
-					break;
-				}
-
-				mpz_add_ui(r, r, 1);
-				mpz_clear(min_s);
-				mpz_clear(max_s);
+				mpz_add_ui(s, s, 1);
+				pad_check = check_padding(s, c, e, n);
 			}
-			/*printf("[DEBUG] s : %s \n", mpz_get_str(NULL, 16, s));
-			printf("[DEBUG] r : %s\n", mpz_get_str(NULL, 16, r));*/
 
-			/*printf("Ran out of space\n");*/
+			/* solution found */
 			if (pad_check)
 			{
-
-
-				/* Step 3: Narrowing the set of solutions. */
-				mpz_clear(min_r);
-				mpz_init(min_r);
-				mpz_mul(min_r, a, s );
-				mpz_sub(min_r, min_r, three_B);
-				mpz_cdiv_q (min_r, min_r, n);
-				if (!mpz_sgn(min_r))
-					mpz_add_ui(min_r, min_r, 1);
-
-				mpz_clear(max_r);
-				mpz_init(max_r);
-				mpz_mul(max_r, b, s );
-				mpz_sub(max_r, max_r, two_B);
-				mpz_fdiv_q (max_r, max_r, n);
-
-				if (mpz_cmp(min_r, max_r) > 0)
-				{
-					mpz_set(min_r, r);
-					mpz_set(max_r, r);
-				}
-				
-				/*printf("[DEBUG] min_r : %s\n", mpz_get_str(NULL, 16, min_r));
-				printf("[DEBUG] max_r : %s\n", mpz_get_str(NULL, 16, max_r));*/
-			}
-		
-
-			if (!pad_check)
+				i++;
 				break;
+			}
 
-			mpz_add_ui(r, r, 1);	
+			mpz_add_ui(r, r, 1);
+			mpz_clear(min_s);
+			mpz_clear(max_s);
 		}
+		/*printf("[DEBUG] s : %s \n", mpz_get_str(NULL, 16, s));
+		  printf("[DEBUG] r : %s\n", mpz_get_str(NULL, 16, r));*/
+
+		if (pad_check)
+		{
 
 
-		if (!pad_check)
+			/* Step 3: Narrowing the set of solutions. */
+			mpz_clear(min_r);
+			mpz_init(min_r);
+			mpz_mul(min_r, a, s );
+			mpz_sub(min_r, min_r, three_B);
+			mpz_cdiv_q (min_r, min_r, n);
+			if (!mpz_sgn(min_r))
+				mpz_add_ui(min_r, min_r, 1);
+
+			mpz_clear(max_r);
+			mpz_init(max_r);
+			mpz_mul(max_r, b, s );
+			mpz_sub(max_r, max_r, two_B);
+			mpz_fdiv_q (max_r, max_r, n);
+
+			if (mpz_cmp(min_r, max_r) > 0)
+			{
+				mpz_set(min_r, r);
+				mpz_set(max_r, r);
+			}
+			
+			/*printf("[DEBUG] min_r : %s\n", mpz_get_str(NULL, 16, min_r));
+			  printf("[DEBUG] max_r : %s\n", mpz_get_str(NULL, 16, max_r));*/
+
+			update_a(a, min_r, s, two_B, three_B, n );
+			update_b(b, max_r, s, two_B, three_B, n );
+		}
+		else
 		{
 			printf("Wrong search space : [%s,%s] \n",  mpz_get_str(NULL, 16, a),  mpz_get_str(NULL, 16, b));
 			goto cleanup;
@@ -378,8 +424,12 @@ int main (int argc, char *argv[])
 		mpz_clear(r);
 	}
 
-
-/*	/ Step 4: Computing the solution. */
+	/* 
+	 * Step 4: Computing the solution. 
+	 * Usually, the resulting range is the following one : [a, a+1].
+	 * Since both can validate the padding, we discriminate the real plaintext number by 
+	 * "encrypting" it and compare it to the original ciphertext given by the server.
+	 */
 	rsa_encrypt(&cc, a, n, e);
 	if (0 == mpz_cmp(cc, c))
 	{
@@ -391,9 +441,8 @@ int main (int argc, char *argv[])
 		rsa_encrypt(&cc, b, n, e);
 		if (0 == mpz_cmp(cc, c))
 			print_secret_msg(b);
-			/*printf("[DEBUG] m :  %s\n", mpz_get_str(NULL, 16, b));*/
 		else
-			printf("[DEBUG] Error\n");
+			printf("The secret message could not be found.\n");
 	}
 	mpz_clear(cc);
 
