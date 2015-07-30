@@ -107,7 +107,7 @@ Caveat : challenge `#31 & #32` can't be called from the top-level Makefile since
   - [ ] [DSA nonce recovery from repeated nonce](http://cryptopals.com/sets/6/challenges/44)
   - [ ] [DSA parameter tampering](http://cryptopals.com/sets/6/challenges/45)
   - [x] [RSA parity oracle]([46]_RSA_parity_oracle/)
-  - [ ] [Bleichenbacher's PKCS 1.5 Padding Oracle (Simple Case)](http://cryptopals.com/sets/6/challenges/47)
+  - [x] [Bleichenbacher's PKCS 1.5 Padding Oracle (Simple Case)]([47]_Bleichenbacher_s_PKCS_1.5_Padding_Oracle_(Simple_Case))
   - [ ] [Bleichenbacher's PKCS 1.5 Padding Oracle (Complete Case)](http://cryptopals.com/sets/6/challenges/48)
 
 ## Set 7
