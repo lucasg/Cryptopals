@@ -34,6 +34,12 @@ int b98_init(struct bleichenbacher_98_t *b98, const size_t rsa_byte_len, const m
 int b98_initial_search(struct bleichenbacher_98_t *b98);
 
 /*
+ * Step 2.c of bleichenbacher's algorithm : search when the domain consists
+ * of a single interval
+ */
+int b98_search_single_range(struct bleichenbacher_98_t *b98);
+
+/*
  *  Check server padding for ciphertext "c*(s**e)".
  */
 int b98_check_padding(struct bleichenbacher_98_t *b98);

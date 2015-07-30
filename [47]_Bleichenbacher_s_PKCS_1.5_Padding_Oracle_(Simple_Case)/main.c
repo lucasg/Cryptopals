@@ -10,139 +10,6 @@
 
 const static char secret_plaintext[] = "Let's kick it !";
 
-#define FRAC_ADD (0x0)
-#define FRAC_SUB (0x1)
-
-/*
- * Compute (ax +/- b)/d
- */
-int compute_frac(mpz_t result, const mpz_t a, const mpz_t x, const mpz_t b, const mpz_t d, int sign)
-{
-	mpz_t num_tmp;
-
-	mpz_init(num_tmp);
-	mpz_mul(num_tmp, a, x);
-
-	switch (sign)
-	{
-	case FRAC_ADD:
-		mpz_add(num_tmp, num_tmp, b);
-		break;
-	case FRAC_SUB:
-		mpz_sub(num_tmp, num_tmp, b);
-		break;
-	default:
-		mpz_clear(num_tmp);
-		return -1;
-	}
-
-	mpz_tdiv_q (result, num_tmp, d);
-
-	mpz_clear(num_tmp);
-	return 0x00;
-}
-
-/*
- * Compute (ax + b)/d
- */
-int compute_frac_add(mpz_t result, const mpz_t a, const mpz_t x, const mpz_t b, const mpz_t d)
-{
-	
-	return compute_frac(result, a, x, b, d, FRAC_ADD);
-}
-
-/*
- * Compute (ax - b)/d
- */
-int compute_frac_sub(mpz_t result, const mpz_t a, const mpz_t x, const mpz_t b, const mpz_t d)
-{
-	return compute_frac(result, a, x, b, d, FRAC_SUB);
-}
-
-/*
- *  Compute the minimal r value at Step 2.c (1) for s-search
- */
-int compute_min_r(mpz_t *r, const mpz_t s_1, const mpz_t b, const  mpz_t min_range, const  mpz_t n )
-{
-	int frac_retcode;
-
-	/*mpz_init(*r);*/
-	frac_retcode = compute_frac_sub(*r, b, s_1, min_range, n);
-	mpz_mul_ui(*r, *r, 2);
-
-	return frac_retcode;
-}
-
-/*
- *  Compute the lower bound s value at Step 2.c (1) for s-search
- */
-int compute_min_s(mpz_t *min_s, const mpz_t r_1, const mpz_t b, const mpz_t min_range, const mpz_t n )
-{
-	mpz_init(*min_s);
-	return compute_frac_add(*min_s, r_1, n, min_range, b);
-}
-
-
-/*
- *   Compute the upper bound s value at Step 2.c (1) for s-search
- */
-int compute_max_s(mpz_t *max_s, const mpz_t r_1, const mpz_t a, const mpz_t max_range, const mpz_t n )
-{
-	mpz_init(*max_s);
-	return compute_frac_add(*max_s, r_1, n, max_range, a);
-}
-
-/* 
- *  Update the lower bound for plaintext candidates domain
- */
-int update_a(mpz_t a, const mpz_t r, const mpz_t s, const mpz_t two_B,  const mpz_t three_B, const mpz_t n )
-{
-	mpz_t tmp;
-
-	mpz_init(tmp);
-	compute_frac_add(tmp, r, n, two_B, s);
-
-	
-	if (mpz_cmp(tmp, three_B) > 0)
-		return 0x00;
-
-	if (mpz_cmp(a, tmp) < 0)
-	{
-		mpz_set(a, tmp);
-		return 0x01;
-	}
-
-	mpz_clear(tmp);
-
-	return 0x00;
-
-}
-
-/* 
- *  Update the upper bound for plaintext candidates domain
- */
-int update_b(mpz_t b, const mpz_t r, const mpz_t s, const mpz_t two_B, const mpz_t three_B, const mpz_t n )
-{
-	mpz_t tmp;
-
-	mpz_init(tmp);
-	compute_frac_add(tmp, r, n, three_B, s);
-
-	if (mpz_cmp(tmp, two_B) < 0)
-		return 0x00;
-	
-	if (mpz_cmp(b, tmp) > 0)
-	{
-		mpz_set(b, tmp);
-		return 0x01;
-	}
-
-	mpz_clear(tmp);
-
-	return 0x00;
-}
-
-
 /*
  * Print the secret data encoded in the plaintext "number" computed
  */
@@ -205,11 +72,9 @@ int print_secret_msg(const mpz_t m)
 
 int main (int argc, char *argv[])
 {
-	size_t dig;
-	int pad_check, iteration;
-	/*mpz_t min_r, max_r;*/
-	mpz_t n, e, c, cc, /*s,*/ s0, diff, min_s, max_s;
-	/*mpz_t a,b,  r;*/
+	int pad_check;
+	size_t dig, iteration;
+	mpz_t n, e, c, cc, s0, diff;
 
 	struct bleichenbacher_98_t b98;
 
@@ -245,6 +110,7 @@ int main (int argc, char *argv[])
 
 	b98_init(&b98, SERVER_RSA_BLOCK_LEN, c, e, n, &server_check_padding);
 
+
 	/* Step 2.a : Starting the search. */
 	b98_initial_search(&b98);
 	mpz_init_set(s0, b98.s);
@@ -259,7 +125,6 @@ int main (int argc, char *argv[])
 
 	
 	iteration = 1;
-	pad_check = 0x00;
 	while (0x00 < mpz_cmp(b98.b, b98.a))
 	{
 /*		printf("(a : %s)\n", mpz_get_str(NULL, 16, b98.a));
@@ -278,36 +143,14 @@ int main (int argc, char *argv[])
 		mpz_clear(diff);
 
 		/* Step 2.c: Searching with one interval left. */
-		compute_min_r(&b98.r, b98.s, b98.b, b98.min_range, n);
-		while (0x01 != pad_check && mpz_cmp(b98.r, b98.max_range) <= 0)
+		if (b98_search_single_range(&b98))
 		{
-			compute_min_s(&min_s, b98.r, b98.b, b98.min_range, n);
-			compute_max_s(&max_s, b98.r, b98.a, b98.max_range, n);
-			
-			mpz_set(b98.s, min_s);
-			while (mpz_cmp(b98.s, max_s) < 0 && 0x1 != pad_check)
-			{
-				mpz_add_ui(b98.s, b98.s, 1);
-				/*mpz_set(b98.s, b98.s);*/
-				pad_check = b98_check_padding(&b98);
-			}
-
 			/* solution found */
-			if (pad_check)
-			{
-				iteration++;
-				break;
-			}
+			iteration++;
 
-			mpz_add_ui(b98.r, b98.r, 1);
-			mpz_clear(min_s);
-			mpz_clear(max_s);
-		}
-		/*printf("[DEBUG] s : %s \n", mpz_get_str(NULL, 16, s));
-		  printf("[DEBUG] r : %s\n", mpz_get_str(NULL, 16, r));*/
+			/*printf("[DEBUG] s : %s \n", mpz_get_str(NULL, 16, s));
+		  	  printf("[DEBUG] r : %s\n", mpz_get_str(NULL, 16, r));*/
 
-		if (pad_check)
-		{
 			/* Step 3: Narrowing the set of solutions. */
 			b98_update_boundaries(&b98);		
 		}
@@ -316,8 +159,6 @@ int main (int argc, char *argv[])
 			printf("Wrong search space : [%s,%s] \n",  mpz_get_str(NULL, 16, b98.a),  mpz_get_str(NULL, 16, b98.b));
 			goto cleanup;
 		}
-
-		pad_check = 0x00;
 	}
 
 	/* 
