@@ -7,8 +7,6 @@ OBJS := b64.o hex.o mini-gmp.o sha1.o sha256.o mpz_invmod.o mpz_nextprime.o rsa_
 OBJS := $(addprefix $(TMP)/, $(OBJS))
 DEP = $(OBJS:.o=.d) 
 
-TARGET_TMP := bin/47_tmp.exe
-
 all: build_dir compile solve
 
 mt_generate:
