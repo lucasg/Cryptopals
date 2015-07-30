@@ -5,8 +5,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#define SERVER_RSA_BITSIZE (256)
-#define SERVER_RSA_BLOCK_LEN (SERVER_RSA_BITSIZE/8)
+
 static mpz_t pubkey, privkey, n;
 
 /*
@@ -48,7 +47,7 @@ int server_encrypt_msg(mpz_t *ciphertext, const char *plaintext, const size_t pt
 int server_check_padding(const mpz_t ciphertext)
 {
 	char *msg, pmsg[SERVER_RSA_BLOCK_LEN];
-	size_t i, msg_len;
+	size_t msg_len;
 	int valid_block_type;
 
 	if (rsa_decrypt_msg(&msg, &msg_len, ciphertext, privkey, n))
@@ -57,11 +56,6 @@ int server_check_padding(const mpz_t ciphertext)
 	/* Right-align the input message to retrieve any leading zeroes */
 	memset(pmsg, 0, SERVER_RSA_BLOCK_LEN);
 	memcpy(pmsg + (SERVER_RSA_BLOCK_LEN - msg_len), msg, msg_len);
-
-	/*printf("[DEBUG] msg : ");
-	for (i = 0 ; i < SERVER_RSA_BLOCK_LEN; i++)
-		printf("%02x:", (unsigned char) pmsg[i]);
-	printf("\n");*/
 
 	valid_block_type = (0x00 == pmsg[0]) && (0x02 == pmsg[1]); 
 	

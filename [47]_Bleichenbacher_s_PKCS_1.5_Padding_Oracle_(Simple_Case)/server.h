@@ -3,6 +3,9 @@
 
 #include "mini-gmp/mini-gmp.h"
 
+#define SERVER_RSA_BITSIZE (256)
+#define SERVER_RSA_BLOCK_LEN (SERVER_RSA_BITSIZE/8)
+
 /*
  * Server initialization using public key and modulo
  */

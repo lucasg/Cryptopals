@@ -1,8 +1,11 @@
-#include "rsa_utils.h"
+#include "hex.h"
+#include "rsa_utils.h"	
+#include "pkcs1_v1.5.h"
 #include "mini-gmp/mpz_invmod.h"
 #include "server.h"
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 
 const static char secret_plaintext[] = "Let's kick it !";
@@ -129,6 +132,66 @@ int check_padding(const mpz_t s, const mpz_t c, const mpz_t e, const mpz_t n)
 	return pad_check;
 }
 
+/*
+ * Print the secret data encoded in the plaintext "number" computed
+ */
+int print_secret_msg(const mpz_t m)
+{
+	char *msg, pmsg[SERVER_RSA_BLOCK_LEN], *hex_decrypted;
+	size_t i, msg_len, hex_dec_len;
+
+	hex_decrypted = mpz_get_str(NULL, 16, m);
+	hex_dec_len = strlen(hex_decrypted);
+
+	/* Hex decryption */
+	msg_len = hex_dec_len/2;
+	if (hex_dec_len % 2)
+	{
+	/*
+	 * In the case where the resulting hex string length is odd (GMP strip every 0-leading digits)
+	 * we need to pad it in order to decode it correctly. Since mpz_get_str() return a 
+	 * NULL-terminated string, we use to terminator to pad our value to the right.
+	 */
+	memcpy(hex_decrypted+1, hex_decrypted, hex_dec_len);
+	hex_decrypted[0] = 0x00;
+	msg_len++;
+	}	
+
+
+	msg = malloc(1 + msg_len*sizeof(char));
+	if (NULL == msg)
+	{
+		free(hex_decrypted);
+		return -1;
+	}
+
+	memset(msg, 0, msg_len);
+	hex_decode(msg, hex_decrypted, 2*msg_len);
+	msg[msg_len] = 0;
+
+
+	/* Right-align the input message to retrieve any leading zeroes */
+	memset(pmsg, 0, SERVER_RSA_BLOCK_LEN);
+	memcpy(pmsg + (SERVER_RSA_BLOCK_LEN - msg_len), msg, msg_len);
+
+	printf("[DEBUG] m :  ");
+	for (i = 0; i < SERVER_RSA_BLOCK_LEN; i++)
+		printf("%02x:", (unsigned char) pmsg[i]);
+	printf("\n");
+
+	/* Strip padding and print message */
+	pkcs1_v1_5_msg_strip(&msg, &msg_len, pmsg, SERVER_RSA_BLOCK_LEN);
+
+	printf("secret_msg :  ");
+	for (i = 0; i < msg_len; i++)
+		printf("%c",  msg[i]);
+	printf("\n");
+
+	free(hex_decrypted);
+	free(msg);
+	return 0x00;
+}
+
 int main (int argc, char *argv[])
 {
 	size_t dig;
@@ -149,7 +212,7 @@ int main (int argc, char *argv[])
 	/*  
 	 *  Unit-testing the whole signing and validating process
 	 */
-	printf("Testing server-side encryption : \n");
+	printf("Testing server-side encryption : ");
 	if (server_encrypt_msg(&c, secret_plaintext, strlen(secret_plaintext)))
 	{
 		printf("Error while encrypting a message\n");
@@ -320,14 +383,15 @@ int main (int argc, char *argv[])
 	rsa_encrypt(&cc, a, n, e);
 	if (0 == mpz_cmp(cc, c))
 	{
-		printf("[DEBUG] m :  %s\n", mpz_get_str(NULL, 16, a));
+		print_secret_msg(a);
 	}
 	else 
 	{
 		mpz_clear(cc);
 		rsa_encrypt(&cc, b, n, e);
 		if (0 == mpz_cmp(cc, c))
-			printf("[DEBUG] m :  %s\n", mpz_get_str(NULL, 16, b));
+			print_secret_msg(b);
+			/*printf("[DEBUG] m :  %s\n", mpz_get_str(NULL, 16, b));*/
 		else
 			printf("[DEBUG] Error\n");
 	}

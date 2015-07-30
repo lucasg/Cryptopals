@@ -187,3 +187,32 @@ int pkcs1_v1_5_insecure_validate(const 	char *signature, const size_t signature_
 	 */
 	return (0 == memcmp(hash, origin_hash , origin_hash_len));
 }
+
+/*  
+ * For pkcs1_msg blocks, strip from a valid block the unecessary padding and reserved block, in order to retrieve the message
+ * Since the message is in the data block, this functions does not allocate memory, it just place the pointer at the correct location 
+ */
+int pkcs1_v1_5_msg_strip(char **message, size_t *message_len , const char *block, const size_t block_len)
+{
+	/*int pad_valid;*/
+
+	if (block_len < 2)
+		return -1;
+
+	/*pad_valid = pkcs1_v1_5_insecure_validate(block, block_len, NULL, 0);
+	if ( 0x1 != pad_valid)
+		return pad_valid;*/
+
+	/* 0x00 0x02 reserved bytes */
+	*message = (char *) block + 2;
+
+	/* looking for padding terminator */
+	*message += strlen(*message);
+
+	if (((int) (*message - block)) > block_len)
+		return -1;
+
+	(*message)++;
+	*message_len = block_len - (size_t) (*message - block);
+	return 0x01;
+}

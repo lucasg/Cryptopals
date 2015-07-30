@@ -28,4 +28,10 @@ int pkcs1_v1_5_generate(unsigned char *output, const unsigned char *msg, const s
  */
 int pkcs1_v1_5_insecure_validate(const char *signature, const size_t signature_len,  const unsigned char *origin_hash, const size_t origin_hash_len);
 
+/*  
+ * For pkcs1_msg blocks, strip from a valid block the unecessary padding and reserved block, in order to retrieve the message
+ * Since the message is in the data block, this functions does not allocate memory, it just place the pointer at the correct location 
+ */
+int pkcs1_v1_5_msg_strip(char **message, size_t *message_len , const char *block, const size_t block_len);
+
 #endif /* _PKCS_1_5_H_ */
