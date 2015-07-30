@@ -8,7 +8,6 @@ struct bleichenbacher_98_t
 {
 	/* bleichenbacher's candidate */
 	mpz_t r, s;
-	mpz_t min_r, max_r;
 
 	/* Search space initial and current boundaries */
 	mpz_t min_range, max_range;

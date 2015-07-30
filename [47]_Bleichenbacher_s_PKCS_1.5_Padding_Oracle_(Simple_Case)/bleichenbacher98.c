@@ -130,8 +130,7 @@ int b98_init(struct bleichenbacher_98_t *b98, const size_t rsa_byte_len, const m
 
 	mpz_init_set_ui(b98->s, 1);
 	mpz_init_set_ui(b98->r, 1);
-	mpz_init_set_ui(b98->min_r, 1);
-	mpz_init_set_ui(b98->max_r, 1);
+
 
 	b98 -> server_padding_validate = server_validation;
 
@@ -169,8 +168,7 @@ int b98_cleanup(struct bleichenbacher_98_t *b98)
 
 	mpz_clear(b98->r);
 	mpz_clear(b98->s);
-	mpz_clear(b98->min_r);	
-	mpz_clear(b98->max_r);
+
 
 
 	mpz_clear(b98->min_range);
@@ -209,26 +207,31 @@ int b98_check_padding(struct bleichenbacher_98_t *b98)
  */
 int b98_update_boundaries(struct bleichenbacher_98_t *b98)
 {
-	mpz_mul(b98->min_r, b98->a, b98->s );
-	mpz_sub(b98->min_r, b98->min_r, b98->max_range);
-	mpz_cdiv_q (b98->min_r, b98->min_r, b98->n);
-	if (!mpz_sgn(b98->min_r))
-		mpz_add_ui(b98->min_r, b98->min_r, 1);
+	mpz_t min_r, max_r;
 
+	mpz_init(min_r);
+	mpz_mul(min_r, b98->a, b98->s );
+	mpz_sub(min_r, min_r, b98->max_range);
+	mpz_cdiv_q (min_r, min_r, b98->n);
+	if (!mpz_sgn(min_r))
+		mpz_add_ui(min_r, min_r, 1);
 
-	mpz_mul(b98->max_r, b98->b, b98->s );
-	mpz_sub(b98->max_r, b98->max_r, b98->min_range);
-	mpz_fdiv_q (b98->max_r, b98->max_r, b98->n);
+	mpz_init(max_r);
+	mpz_mul(max_r, b98->b, b98->s );
+	mpz_sub(max_r, max_r, b98->min_range);
+	mpz_fdiv_q (max_r, max_r, b98->n);
 
-	if (mpz_cmp(b98->min_r, b98->max_r) > 0)
+	if (mpz_cmp(min_r, max_r) > 0)
 	{
-		mpz_set(b98->min_r, b98->r);
-		mpz_set(b98->max_r, b98->r);
+		mpz_set(min_r, b98->r);
+		mpz_set(max_r, b98->r);
 	}
 
 
-	b98_update_a(b98->a, b98->min_r, b98->s,  b98->min_range,  b98->max_range, b98->n );
-	b98_update_b(b98->b, b98->max_r, b98->s,  b98->min_range,  b98->max_range, b98->n );
+	b98_update_a(b98->a, min_r, b98->s,  b98->min_range,  b98->max_range, b98->n );
+	b98_update_b(b98->b, max_r, b98->s,  b98->min_range,  b98->max_range, b98->n );
 
+	mpz_clear(min_r);
+	mpz_clear(max_r);
 	return 0x00;
 }
