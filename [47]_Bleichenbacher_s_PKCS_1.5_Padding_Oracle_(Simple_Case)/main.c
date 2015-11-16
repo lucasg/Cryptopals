@@ -15,36 +15,54 @@ const static char secret_plaintext[] = "Let's kick it !";
  */
 int print_secret_msg(const mpz_t m)
 {
-	char *msg, pmsg[SERVER_RSA_BLOCK_LEN], *hex_decrypted;
+	int odd_hex_len = 0x00;
+	char *msg, *msg_cpy, pmsg[SERVER_RSA_BLOCK_LEN], *hex_decrypted, *phex_decrypted;
 	size_t i, msg_len, hex_dec_len;
 
 	hex_decrypted = mpz_get_str(NULL, 16, m);
 	hex_dec_len = strlen(hex_decrypted);
 
-	/* Hex decryption */
-	msg_len = hex_dec_len/2;
+	printf("[DEBUG] hex_decrypted :  %s\n", hex_decrypted);
+	
+	/* Hex padding */
 	if (hex_dec_len % 2)
 	{
 	/*
 	 * In the case where the resulting hex string length is odd (GMP strip every 0-leading digits)
 	 * we need to pad it in order to decode it correctly. Since mpz_get_str() return a 
 	 * NULL-terminated string, we use to terminator to pad our value to the right.
+	 *
+	 *  Think : hex_array = \x00 + hex_array
 	 */
-	memcpy(hex_decrypted+1, hex_decrypted, hex_dec_len);
-	hex_decrypted[0] = 0x00;
-	msg_len++;
+	 	phex_decrypted  = malloc((1 + hex_dec_len)*sizeof(char));
+		if (NULL == phex_decrypted)
+		{
+			free(hex_decrypted);
+			return -1;
+		} 	
+
+		phex_decrypted[0] = 0x00;
+		memcpy(phex_decrypted + 1, hex_decrypted, hex_dec_len*sizeof(char));
+		free(hex_decrypted);
+
+		hex_dec_len +=1;
 	}	
+	else
+	{
+		phex_decrypted = hex_decrypted;
+	}
 
-
+	/* Hex decoding */
+	msg_len = hex_dec_len/2;
 	msg = malloc(1 + msg_len*sizeof(char));
 	if (NULL == msg)
 	{
-		free(hex_decrypted);
+		free(phex_decrypted);
 		return -1;
 	}
 
 	memset(msg, 0, msg_len);
-	hex_decode(msg, hex_decrypted, 2*msg_len);
+	hex_decode(msg, phex_decrypted, 2*msg_len);
 	msg[msg_len] = 0;
 
 
@@ -52,12 +70,13 @@ int print_secret_msg(const mpz_t m)
 	memset(pmsg, 0, SERVER_RSA_BLOCK_LEN);
 	memcpy(pmsg + (SERVER_RSA_BLOCK_LEN - msg_len), msg, msg_len);
 
-	printf("[DEBUG] m :  ");
-	for (i = 0; i < SERVER_RSA_BLOCK_LEN; i++)
-		printf("%02x:", (unsigned char) pmsg[i]);
-	printf("\n");
+	// printf("[DEBUG] m :  ");
+	// for (i = 0; i < SERVER_RSA_BLOCK_LEN; i++)
+	// 	printf("%02x:", (unsigned char) pmsg[i]);
+	// printf("\n");
 
 	/* Strip padding and print message */
+	msg_cpy = msg;
 	pkcs1_v1_5_msg_strip(&msg, &msg_len, pmsg, SERVER_RSA_BLOCK_LEN);
 
 	printf("secret_msg :  ");
@@ -65,8 +84,8 @@ int print_secret_msg(const mpz_t m)
 		printf("%c",  msg[i]);
 	printf("\n");
 
-	free(hex_decrypted);
-	free(msg);
+	free(phex_decrypted);
+	free(msg_cpy);
 	return 0x00;
 }
 
@@ -135,7 +154,7 @@ int main (int argc, char *argv[])
 		if (0 == mpz_cmp_ui(diff, 1)) /* we found the solution. range [a, a+1] */
 			break;
 
-		printf("Range digits (iter : %04d) : ", iteration);
+		printf("Range digits (iter : %04d) : ", (int) iteration);
 		for (dig  = 0; dig < mpz_sizeinbase (diff, 10); dig++)
 			printf("#");
 		printf("\n");
@@ -177,9 +196,13 @@ int main (int argc, char *argv[])
 		mpz_clear(cc);
 		rsa_encrypt(&cc, b98.b, n, e);
 		if (0 == mpz_cmp(cc, c))
+		{
 			print_secret_msg(b98.b);
+		}
 		else
+		{
 			printf("The secret message could not be found.\n");
+		}
 	}
 	mpz_clear(cc);
 
