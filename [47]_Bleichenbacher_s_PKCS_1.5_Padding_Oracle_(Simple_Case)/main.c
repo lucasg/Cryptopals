@@ -15,7 +15,6 @@ const static char secret_plaintext[] = "Let's kick it !";
  */
 int print_secret_msg(const mpz_t m)
 {
-	int odd_hex_len = 0x00;
 	char *msg, *msg_cpy, pmsg[SERVER_RSA_BLOCK_LEN], *hex_decrypted, *phex_decrypted;
 	size_t i, msg_len, hex_dec_len;
 
