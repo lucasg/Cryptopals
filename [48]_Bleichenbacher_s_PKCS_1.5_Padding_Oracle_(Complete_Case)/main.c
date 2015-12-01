@@ -11,6 +11,15 @@
 const static char secret_plaintext[] = "Let's kick it !";
 
 /*
+ *  Output a mpz_t number as a hex number.
+ */
+char* tmp;
+#define PRINT_HEX_MPZ(format,number) tmp = mpz_get_str(NULL, 16, number); \
+	printf(format, tmp); \
+	free(tmp); 
+
+
+/*
  * Print the secret data encoded in the plaintext "number" computed
  */
 int print_secret_msg(const mpz_t m)
@@ -20,8 +29,6 @@ int print_secret_msg(const mpz_t m)
 
 	hex_decrypted = mpz_get_str(NULL, 16, m);
 	hex_dec_len = strlen(hex_decrypted);
-
-	printf("[DEBUG] hex_decrypted :  %s\n", hex_decrypted);
 	
 	/* Hex padding */
 	if (hex_dec_len % 2)
@@ -69,11 +76,6 @@ int print_secret_msg(const mpz_t m)
 	memset(pmsg, 0, SERVER_RSA_BLOCK_LEN);
 	memcpy(pmsg + (SERVER_RSA_BLOCK_LEN - msg_len), msg, msg_len);
 
-	// printf("[DEBUG] m :  ");
-	// for (i = 0; i < SERVER_RSA_BLOCK_LEN; i++)
-	// 	printf("%02x:", (unsigned char) pmsg[i]);
-	// printf("\n");
-
 	/* Strip padding and print message */
 	msg_cpy = msg;
 	pkcs1_v1_5_msg_strip(&msg, &msg_len, pmsg, SERVER_RSA_BLOCK_LEN);
@@ -101,8 +103,6 @@ int main (int argc, char *argv[])
 		printf("Error while initializing server\n");
 		return -1;	
 	}
-	/*printf("[DEBUG] n : %s\n", mpz_get_str(NULL, 16, n));
-	  printf("[DEBUG] e : %s\n", mpz_get_str(NULL, 16, e));*/
  
 	/*  
 	 *  Unit-testing the whole signing and validating process
@@ -132,11 +132,11 @@ int main (int argc, char *argv[])
 		goto cleanup;
 	}
 
-	printf("(min_range : %s)\n", mpz_get_str(NULL, 16, b98.min_range));
-	printf("(max_range : %s)\n", mpz_get_str(NULL, 16, b98.max_range));
+	PRINT_HEX_MPZ("(min_range : %s)\n", b98.min_range);
+	PRINT_HEX_MPZ("(max_range : %s)\n", b98.max_range);
 	
 
-	printf("Initial search\n");
+	printf("Initial search\n");	
 	/* Step 2.a : Starting the search. */
 	if (0 == b98_initial_search(&b98))
 	{
@@ -145,7 +145,7 @@ int main (int argc, char *argv[])
 	}
 	printf("\n");
 
-	printf("(new solution found : %s)\n", mpz_get_str(NULL, 16, b98.s));
+	PRINT_HEX_MPZ("(new solution found : %s)\n", b98.s);
 	printf("(min_range : %s)\n", mpz_get_str(NULL, 16, b98.min_range));
 	printf("(max_range : %s)\n", mpz_get_str(NULL, 16, b98.max_range));
 	
@@ -183,7 +183,7 @@ int main (int argc, char *argv[])
 		{
 			/* solution found */
 			iteration++;
-			printf("(new solution found : %s)\n", mpz_get_str(NULL, 16, b98.s));	
+			//PRINT_HEX_MPZ("(new solution found : %s)\n",  b98.s);	
 
 			/*printf("[DEBUG] s : %s \n", mpz_get_str(NULL, 16, s));
 		  	  printf("[DEBUG] r : %s\n", mpz_get_str(NULL, 16, r));*/

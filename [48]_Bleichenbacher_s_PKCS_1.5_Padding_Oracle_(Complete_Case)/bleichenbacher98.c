@@ -6,11 +6,6 @@
 #define B98_FRAC_SUB (0x1)
 
 /*
- *  Realloc block len (# of mpz_t structures)
- */
-//#define INTERVAL_ARRAY_BLOCK_SIZE (0x16)
-
-/*
  * Compute (ax +/- b)/d
  */
 int b98_compute_frac(mpz_t result, const mpz_t a, const mpz_t x, const mpz_t b, const mpz_t d, int sign)
@@ -156,13 +151,13 @@ int b98_init(struct bleichenbacher_98_t *b98, const size_t rsa_byte_len, const m
 	mpz_init_set(b98->e, e);
 	mpz_init_set(b98->n, n);
 
-	printf("(n : %s)\n", mpz_get_str(NULL, 16, b98->n));
+
 	/* B = 2**(8*(k-2)) */
 	mpz_init(B);
 	mpz_init_set_ui(two, 2);
 	mpz_init_set_ui(B_exp, 8*(rsa_byte_len - 2));
 	mpz_powm(B, two, B_exp, n);
-	printf("(2**%d[n] = B : %s)\n", 8*(rsa_byte_len - 2),  mpz_get_str(NULL, 16, B));
+	//printf("(2**%d[n] = B : %s)\n", 8*(rsa_byte_len - 2),  mpz_get_str(NULL, 16, B));
 
 	/* min_range = 2B */
 	mpz_init(b98->min_range);
@@ -172,23 +167,6 @@ int b98_init(struct bleichenbacher_98_t *b98, const size_t rsa_byte_len, const m
 	mpz_init(b98->max_range);
 	mpz_mul_ui(b98->max_range, B, 3);
 	mpz_sub_ui(b98->max_range, b98->max_range, 1);
-
-	/*b98->a = malloc(INTERVAL_ARRAY_BLOCK_SIZE*sizeof(mpz_t));
-	if (NULL == b98->a)
-		return -1;
-
-	b98->b = malloc(INTERVAL_ARRAY_BLOCK_SIZE*sizeof(mpz_t));
-	if (NULL == b98->b)
-		return -1;
-
-	mpz_init2(b98->a[0], 1024);
-	mpz_set(b98->a[0], b98->min_range);
-	mpz_init2(b98->b[0], 1024);
-	mpz_set(b98->b[0], b98->max_range);
-	b98 -> interval_count = 1;
-	b98 -> int_array_size = INTERVAL_ARRAY_BLOCK_SIZE;*/
-	printf("(B min_range : %s)\n", mpz_get_str(NULL, 16, b98->min_range));
-	printf("(B max_range : %s)\n", mpz_get_str(NULL, 16, b98->max_range));
 	
 
 	b98_search_sets_init(&(b98->sets), b98 -> min_range, b98 -> max_range);
@@ -224,26 +202,7 @@ int b98_cleanup(struct bleichenbacher_98_t *b98)
 	mpz_clear(b98->max_range);
 
 	b98_search_sets_free(&(b98 -> sets));
-/*	if (NULL != b98->a)
-	{
-		for (i = 0; i < b98->interval_count; i++)
-			mpz_clear(b98->a[i]);
-		
-		free(b98->a);	
-		b98->a = NULL;
-	}
 
-	if (NULL != b98->b)
-	{
-		for (i = 0; i < b98->interval_count; i++)
-			mpz_clear(b98->b[i]);
-		
-		free(b98->b);	
-		b98->b = NULL;
-	}
-
-	b98 -> interval_count = 0;
-	b98 -> int_array_size = 0; */
 
 	b98 -> server_padding_validate = NULL;
 	return 0x00;
@@ -257,14 +216,15 @@ int b98_initial_search(struct bleichenbacher_98_t *b98)
 	int pad_check = 0x00;
 
 	mpz_cdiv_q (b98->s, b98->n, b98->max_range);
-	while(!pad_check)
+/*	while(!pad_check)
 	{
 		mpz_add_ui(b98->s, b98->s, 1);
 		pad_check = b98_check_padding(b98);
 
 	}
 
-	return pad_check;
+	return pad_check;*/
+	return b98_search_multiple_range(b98);
 }
 
 /*
@@ -283,34 +243,6 @@ int b98_search_multiple_range(struct bleichenbacher_98_t *b98)
 
 	}
 	return pad_check;
-	// while (1 < b98 -> sets.sets.size)
-	// {
-	// 	mpz_init_set(min_s, b98 -> sets.sets.data[0].lo);
-	// 	mpz_init_set(max_s, b98 -> sets.sets.data[0].hi);
-
-	// 	mpz_set(b98->s, min_s);
-
-	// 	while (mpz_cmp(b98->s, max_s) < 0 && 0x1 != pad_check)
-	// 	{
-	// 		mpz_add_ui(b98->s, b98->s, 1);
-	// 		pad_check = b98_check_padding(b98);
-	// 	}
-
-	// 	mpz_clear(min_s);
-	// 	mpz_clear(max_s);
-
-	// 	/* solution found */
-	// 	if (pad_check)
-	// 	{
-	// 		return 0x1;
-	// 	}
-
-	// 	/* Discard the current interval */
-	// 	b98_search_sets_pop(&(b98 -> sets));
-	// }
-	
-	// /* There is only one interval left in the search space */
-	// return b98_search_single_range(b98);
 }
 
 /*
@@ -382,7 +314,6 @@ int b98_update_boundaries(struct bleichenbacher_98_t *b98)
 	mpz_t min_r, max_r, a, b;
 	struct b98_search_sets_t new_sets;
 
-	printf("(interval count : %d)\n", b98 -> sets.sets.size);
 	b98_search_sets_init(&new_sets, b98 -> min_range, b98 -> max_range);
 
 	for (i = 0; i < b98 -> sets.sets.size; i++)
@@ -411,7 +342,7 @@ int b98_update_boundaries(struct bleichenbacher_98_t *b98)
 			mpz_set(max_r, b98->r);
 		}
 
-		/* TODO : update [a,b] at the same time */
+		/* update [a,b] at the same time */
 		b98_update_ab(b98, &new_sets, a, b, min_r, max_r);
 
 		mpz_clear(min_r);
@@ -421,15 +352,50 @@ int b98_update_boundaries(struct bleichenbacher_98_t *b98)
 		mpz_clear(b);
 
 	}
-	printf("(new sets interval count : %d)\n", new_sets.sets.size);
 
 	b98_search_sets_free(&(b98 -> sets));
 	b98_search_sets_init(&(b98 -> sets), b98 -> min_range, b98 -> max_range);
+	b98_search_sets_append(&(b98 -> sets), new_sets.sets.data[0].lo, new_sets.sets.data[0].hi);
 
-
-	for (i = 0; i < new_sets.sets.size; i++)
+	struct mpz_interval_t* last_value = NULL;
+	for (i = 1; i < new_sets.sets.size; i++)
 	{
-		b98_search_sets_append(&(b98 -> sets), new_sets.sets.data[i].lo, new_sets.sets.data[i].hi);
+		last_value = &(b98 -> sets.sets.data[ b98 -> sets.sets.size - 1]);
+		
+		/* disjoint sets */
+		if (mpz_cmp(last_value -> hi, new_sets.sets.data[i].lo) < 0)
+		{
+			/* restore last value */
+			/*b98_ss -> sets.size++;*/
+				
+			/*mpz_init_set(b98_ss -> sets.data[b98_ss -> sets.size].lo, lo);
+			mpz_init_set(b98_ss -> sets.data[b98_ss -> sets.size].hi, hi);*/
+			b98_search_sets_append(&(b98 -> sets), new_sets.sets.data[i].lo, new_sets.sets.data[i].hi);
+
+			/*b98_ss -> sets.size++;*/
+		}
+		/* coalesce sets */
+		else if (0 == mpz_cmp(last_value -> hi, new_sets.sets.data[i].lo))  
+		{
+			mpz_clear(last_value -> hi);
+			mpz_init_set(last_value -> hi, new_sets.sets.data[i].hi);
+
+		/*	/ restore last value /
+			b98_ss -> sets.size++;*/
+		}
+		else
+		{
+			/* coalesce sets */
+			if (mpz_cmp(last_value -> hi, new_sets.sets.data[i].hi) > 0)
+			{
+				mpz_clear(last_value -> hi);
+				mpz_init_set(last_value -> hi, new_sets.sets.data[i].hi);
+
+			}
+
+			/* restore last value */
+			//b98_ss -> sets.size++;
+		}
 	}
 	
 	/* Update displayed "boundaries" */
@@ -438,14 +404,10 @@ int b98_update_boundaries(struct bleichenbacher_98_t *b98)
 	for (i = 1; i < new_sets.sets.size; i++)
 	{
 
-		if (mpz_cmp(new_sets.sets.data[i].lo, b98 -> sets.a) < 0)
-			mpz_set(b98 -> sets.a, new_sets.sets.data[i].lo);
-
 		if (mpz_cmp(new_sets.sets.data[i].hi, b98 -> sets.b) > 0)
 			mpz_set(b98 -> sets.b, new_sets.sets.data[i].hi);
 	}
 	
-	//printf("(interval count : %d in (%s,%s))\n", b98 -> sets.sets.size, mpz_get_str(NULL, 16,b98->sets.a), mpz_get_str(NULL, 16,b98->sets.b));
 
 
 	b98_search_sets_free(&new_sets);

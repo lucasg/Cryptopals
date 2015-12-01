@@ -53,27 +53,23 @@ int b98_search_sets_append(struct b98_search_sets_t *b98_ss, const mpz_t lo, con
 	}
 
 	mpz_init_set(b98_ss -> sets.data[b98_ss -> sets.size].lo, lo);
-	mpz_init_set(b98_ss -> sets.data[b98_ss -> sets.size].hi, hi);
+	mpz_init_set(b98_ss -> sets.data[b98_ss -> sets.size].hi, hi);		
 	b98_ss -> sets.size++;
-
+	
 	return 0x00;
 }
 
 /*
- * Discard the "oldest" value stored
+ * Discard the "newest" value stored
  */
-int b98_search_sets_pop(struct b98_search_sets_t *b98_ss)
+struct mpz_interval_t* b98_search_sets_pop(struct b98_search_sets_t *b98_ss)
 {
 	if (NULL == b98_ss || 0 == b98_ss -> sets.size )
-		return -EINVAL;
+		return NULL;
 
-	mpz_clear(b98_ss -> sets.data[0].lo);
-	mpz_clear(b98_ss -> sets.data[0].hi);
-
-	b98_ss -> sets.data++;
 	b98_ss -> sets.size--;
 
-	return 0x00;
+	return &(b98_ss -> sets.data[b98_ss -> sets.size]);
 }
 
 

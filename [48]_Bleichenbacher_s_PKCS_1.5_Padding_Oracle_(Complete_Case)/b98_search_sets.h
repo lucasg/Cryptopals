@@ -43,7 +43,7 @@ int b98_search_sets_append(struct b98_search_sets_t *b98_ss, const mpz_t lo, con
 /*
  * Discard the "oldest" value stored
  */
-int b98_search_sets_pop(struct b98_search_sets_t *b98_ss);
+struct mpz_interval_t* b98_search_sets_pop(struct b98_search_sets_t *b98_ss);
 
 
 /*

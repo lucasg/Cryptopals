@@ -13,11 +13,40 @@ static mpz_t pubkey, privkey, n;
  */
 int server_init(mpz_t e,  mpz_t modulo)
 {
-	if (rsa_gen_key(&n, &pubkey, &privkey,  SERVER_RSA_BITSIZE ))
-		return -1;
+	mpz_t B, two, B_exp;
+
+	
+	mpz_init_set_ui(B, 0);
+	mpz_init_set_ui(two, 2);
+	mpz_init_set_ui(B_exp, 8*(SERVER_RSA_BLOCK_LEN - 2));
+	
+	mpz_init_set_ui(n,0);
+	mpz_init_set_ui(pubkey,0);
+	mpz_init_set_ui(privkey,0);
+
+	/* We need to generate a n bigger than 3B -1 in order to be able to 
+	   encrypt message using PKCS#1 v1.5 */
+	while (mpz_cmp(n, B) <= 0)
+	{
+		mpz_clear(n);
+		mpz_clear(pubkey);
+		mpz_clear(privkey);
+
+		if (rsa_gen_key(&n, &pubkey, &privkey,  SERVER_RSA_BITSIZE ))
+			return -1;
+
+		/* B = 2**(8*(k-2)) */
+		mpz_powm(B, two, B_exp, n);
+		mpz_mul_ui(B, B, 3);
+		mpz_sub_ui(B, B, 1);
+	}
 
 	mpz_init_set(e, pubkey);
 	mpz_init_set(modulo, n);
+	
+	mpz_clear(B);
+	mpz_clear(two);
+	mpz_clear(B_exp);
 
 	return 0x00;
 }
