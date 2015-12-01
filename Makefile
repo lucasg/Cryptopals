@@ -27,8 +27,11 @@ exos: $(exercices)
 
 .PHONY : exercices
 $(exercices):
+ifeq ($(OS), Windows_NT)
 	@$(MAKE) -C $(shell ./find_folder.sh "$@") $(COMMAND) 
-	
+else
+	@$(MAKE) -C "$(shell ls -d \[$@\]*)" $(COMMAND) 
+endif
 	
 .PHONY : tools
 tools:
