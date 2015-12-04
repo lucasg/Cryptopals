@@ -5,7 +5,7 @@
 
 
 // Modular inversion using GMP bignum integers
-int mpz_invmod(mpz_t *inv, mpz_t x, mpz_t n);
+int mpz_invmod(mpz_t *inv, const mpz_t x, const mpz_t n);
 
 // Unit Test for MPZ Modular inversion
 void test_mpz_invmod();
