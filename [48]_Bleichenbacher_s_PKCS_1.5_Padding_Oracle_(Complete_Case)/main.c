@@ -11,6 +11,15 @@
 const static char secret_plaintext[] = "Let's kick it !";
 
 /*
+ *  Output a mpz_t number as a hex number.
+ */
+char* tmp;
+#define PRINT_HEX_MPZ(format,number) tmp = mpz_get_str(NULL, 16, number); \
+	printf(format, tmp); \
+	free(tmp); 
+
+
+/*
  * Print the secret data encoded in the plaintext "number" computed
  */
 int print_secret_msg(const mpz_t m)
@@ -20,8 +29,6 @@ int print_secret_msg(const mpz_t m)
 
 	hex_decrypted = mpz_get_str(NULL, 16, m);
 	hex_dec_len = strlen(hex_decrypted);
-
-	printf("[DEBUG] hex_decrypted :  %s\n", hex_decrypted);
 	
 	/* Hex padding */
 	if (hex_dec_len % 2)
@@ -69,11 +76,6 @@ int print_secret_msg(const mpz_t m)
 	memset(pmsg, 0, SERVER_RSA_BLOCK_LEN);
 	memcpy(pmsg + (SERVER_RSA_BLOCK_LEN - msg_len), msg, msg_len);
 
-	// printf("[DEBUG] m :  ");
-	// for (i = 0; i < SERVER_RSA_BLOCK_LEN; i++)
-	// 	printf("%02x:", (unsigned char) pmsg[i]);
-	// printf("\n");
-
 	/* Strip padding and print message */
 	msg_cpy = msg;
 	pkcs1_v1_5_msg_strip(&msg, &msg_len, pmsg, SERVER_RSA_BLOCK_LEN);
@@ -92,17 +94,15 @@ int main (int argc, char *argv[])
 {
 	int pad_check;
 	size_t dig, iteration;
-	mpz_t n, e, c, cc, s0, diff;
+	mpz_t n, e, c, cc, diff;
 
 	struct bleichenbacher_98_t b98;
-
+	
 	if (server_init(e, n))
 	{
 		printf("Error while initializing server\n");
 		return -1;	
 	}
-	/*printf("[DEBUG] n : %s\n", mpz_get_str(NULL, 16, n));
-	  printf("[DEBUG] e : %s\n", mpz_get_str(NULL, 16, e));*/
  
 	/*  
 	 *  Unit-testing the whole signing and validating process
@@ -126,30 +126,43 @@ int main (int argc, char *argv[])
 		printf("OK\n");
 
 
-	b98_init(&b98, SERVER_RSA_BLOCK_LEN, c, e, n, &server_check_padding);
+	if (-1 == b98_init(&b98, SERVER_RSA_BLOCK_LEN, c, e, n, &server_check_padding))
+	{
+		printf("Error while allocating resources for b98\n");
+		goto cleanup;
+	}
 
+	PRINT_HEX_MPZ("(min_range : %s)\n", b98.min_range);
+	PRINT_HEX_MPZ("(max_range : %s)\n", b98.max_range);
+	
 
+	printf("Initial search\n");	
 	/* Step 2.a : Starting the search. */
-	b98_initial_search(&b98);
-	mpz_init_set(s0, b98.s);
+	if (0 == b98_initial_search(&b98))
+	{
+		printf("Did not found a single solution.\n");
+		goto cleanup;
+	}
+	printf("\n");
 
+	PRINT_HEX_MPZ("(new solution found : %s)\n", b98.s);
+	printf("(min_range : %s)\n", mpz_get_str(NULL, 16, b98.min_range));
+	printf("(max_range : %s)\n", mpz_get_str(NULL, 16, b98.max_range));
+	
 
+	printf("Update boundaries\n");
 	/* Step 3: Narrowing the set of solutions. */
 	b98_update_boundaries(&b98);
-
-	
-/*	printf("[DEBUG] min_r : %s\n", mpz_get_str(NULL, 16, b98.min_r));
-	printf("[DEBUG] max_r : %s\n", mpz_get_str(NULL, 16, b98.max_r));*/
-
 	
 	iteration = 1;
-	while (0x00 < mpz_cmp(b98.b, b98.a))
+	while (0x00 < mpz_cmp(b98.sets.b, b98.sets.a))
 	{
-/*		printf("(a : %s)\n", mpz_get_str(NULL, 16, b98.a));
-		printf("(b : %s)\n", mpz_get_str(NULL, 16, b98.b));*/
+		printf("(interval count : %ld)\n", b98.sets.sets.size);
+		//printf("(a : %s)\n", mpz_get_str(NULL, 16, b98.sets.a));
+		//printf("(b : %s)\n", mpz_get_str(NULL, 16, b98.sets.b));
 		
-		mpz_init_set(diff, b98.b);
-		mpz_sub(diff, diff,  b98.a);
+		mpz_init_set(diff, b98.sets.b);
+		mpz_sub(diff, diff,  b98.sets.a);
 		if (0 == mpz_cmp_ui(diff, 1)) /* we found the solution. range [a, a+1] */
 			break;
 
@@ -160,21 +173,28 @@ int main (int argc, char *argv[])
 
 		mpz_clear(diff);
 
-		/* Step 2.c: Searching with one interval left. */
-		if (b98_search_single_range(&b98))
+		/* Step 2.c: Searching . */
+		if (1 == b98.sets.sets.size)
+			pad_check = b98_search_single_range(&b98);
+		else
+			pad_check = b98_search_multiple_range(&b98);
+
+		if (pad_check)
 		{
 			/* solution found */
 			iteration++;
+			//PRINT_HEX_MPZ("(new solution found : %s)\n",  b98.s);	
 
 			/*printf("[DEBUG] s : %s \n", mpz_get_str(NULL, 16, s));
 		  	  printf("[DEBUG] r : %s\n", mpz_get_str(NULL, 16, r));*/
 
 			/* Step 3: Narrowing the set of solutions. */
-			b98_update_boundaries(&b98);		
+			b98_update_boundaries(&b98);	
+			//printf("(interval count : %ld)\n", b98.sets.sets.size);	
 		}
 		else
 		{
-			printf("Wrong search space : [%s,%s] \n",  mpz_get_str(NULL, 16, b98.a),  mpz_get_str(NULL, 16, b98.b));
+			printf("Wrong search space : [%s,%s] \n",  mpz_get_str(NULL, 16, b98.sets.a),  mpz_get_str(NULL, 16, b98.sets.b));
 			goto cleanup;
 		}
 	}
@@ -185,23 +205,19 @@ int main (int argc, char *argv[])
 	 * Since both can validate the padding, we discriminate the real plaintext number by 
 	 * "encrypting" it and compare it to the original ciphertext given by the server.
 	 */
-	rsa_encrypt(&cc, b98.a, n, e);
+	rsa_encrypt(&cc, b98.sets.a, n, e);
 	if (0 == mpz_cmp(cc, c))
 	{
-		print_secret_msg(b98.a);
+		print_secret_msg(b98.sets.a);
 	}
 	else 
 	{
 		mpz_clear(cc);
-		rsa_encrypt(&cc, b98.b, n, e);
+		rsa_encrypt(&cc, b98.sets.b, n, e);
 		if (0 == mpz_cmp(cc, c))
-		{
-			print_secret_msg(b98.b);
-		}
+			print_secret_msg(b98.sets.b);
 		else
-		{
 			printf("The secret message could not be found.\n");
-		}
 	}
 	mpz_clear(cc);
 
@@ -211,7 +227,6 @@ cleanup:
 	mpz_clear(c);
 	mpz_clear(n);
 	mpz_clear(e);
-	mpz_clear(s0);
 
 
 	return 0x00;

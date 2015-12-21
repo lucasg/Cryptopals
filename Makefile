@@ -4,8 +4,8 @@ exercices := 01 02 03 04 05 06 07 08\
 			 17 18 19 20 21 22 23 24\
 			 25 26 27 28 29 30 		\
 			 33 34 35 36 37 38 39 40\
-			 41 42          46 47
-			      #43 44 45       48       
+			 41 42 43 44    46 47 48
+			      		#45              
 
 _all: tools $(exercices)
 
@@ -27,8 +27,11 @@ exos: $(exercices)
 
 .PHONY : exercices
 $(exercices):
+ifeq ($(OS), Windows_NT)
+	@$(MAKE) -C $(shell ./find_folder.sh "$@") $(COMMAND) 
+else
 	@$(MAKE) -C "$(shell ls -d \[$@\]*)" $(COMMAND) 
-	
+endif
 	
 .PHONY : tools
 tools:

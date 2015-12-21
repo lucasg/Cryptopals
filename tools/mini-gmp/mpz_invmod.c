@@ -1,9 +1,9 @@
 #include "mpz_invmod.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 
-
-void print_bignum(mpz_ptr bignum)
+void print_bignum(const mpz_ptr bignum)
 {
 	char *bignum_str = mpz_get_str(NULL, 10, bignum);
 	printf("%s \n", bignum_str);
@@ -11,8 +11,9 @@ void print_bignum(mpz_ptr bignum)
 }
 
 
-int mpz_invmod(mpz_t *inv, mpz_t x, mpz_t n)
+int mpz_invmod(mpz_t *inv, const  mpz_t x, const  mpz_t n)
 {
+	unsigned int return_code = 0x00;
 	mpz_t m_one, nt, r, tmp, q, nr;
 
 	mpz_init_set_si(m_one, -1);
@@ -59,6 +60,7 @@ int mpz_invmod(mpz_t *inv, mpz_t x, mpz_t n)
     if (0 < mpz_cmp_si(r, 1)) 
     {
     	mpz_set(*inv, m_one);  /* No inverse */
+    	return_code = -EINVAL;
     }
     else
     {	
@@ -73,7 +75,7 @@ int mpz_invmod(mpz_t *inv, mpz_t x, mpz_t n)
     mpz_clear(q);
     mpz_clear(nr);
 
-    return 0;
+    return return_code;
 	
 }
 
