@@ -69,7 +69,7 @@ unsigned load_file(char *fd_stream,	char **contents, size_t *contents_size)
 
 	/* Read the file */
 	*contents_size=fread((*contents),1,fileSize,stream) + 1;
-	(*contents)[*contents_size]=0; // Add terminating zero.
+	(*contents)[*contents_size]=0; /* Add terminating zero. */
 
 	/* Close the file */
 	fclose(stream);
@@ -130,6 +130,8 @@ unsigned char detect_key_single_line(char *lencdata, size_t llen)
 unsigned int find_keysize(char* encdat, unsigned int encdatalen, unsigned int* est_keys, unsigned int est_keys_cnt, unsigned int  minkeysize, unsigned int  maxkeysize)
 {
 	struct key_hscore *hscores;
+	unsigned keysize_candidate;
+
 	hscores =  malloc((maxkeysize-minkeysize)*sizeof(struct key_hscore));
  	if (NULL == hscores)
  	{
@@ -141,7 +143,6 @@ unsigned int find_keysize(char* encdat, unsigned int encdatalen, unsigned int* e
 	/*
 	 * 	Computing and sorting keysizes by Hamming distance scores.
 	 */
-	unsigned keysize_candidate;
 	for(keysize_candidate = minkeysize; keysize_candidate < maxkeysize; keysize_candidate++)
 	{
 		float hscore = hamdist_keyscore(encdat, encdatalen ,keysize_candidate) +
@@ -157,7 +158,7 @@ unsigned int find_keysize(char* encdat, unsigned int encdatalen, unsigned int* e
 
 	for (keysize_candidate = 0; keysize_candidate < est_keys_cnt; keysize_candidate++)
 	{
-		printf("Hamming Distance score for keylen #%d : %lf\n", hscores[keysize_candidate].key, hscores[keysize_candidate].score );
+		printf("Hamming Distance score for keylen #%d : %f\n", hscores[keysize_candidate].key, hscores[keysize_candidate].score );
 		est_keys[keysize_candidate] = hscores[keysize_candidate].key;
 	}
 
@@ -173,6 +174,13 @@ unsigned int find_keysize(char* encdat, unsigned int encdatalen, unsigned int* e
  */
 int main(int argc, char *argv[])
 {
+	unsigned int i,k;
+	unsigned int keysizes[5];
+	unsigned char *encdata, *tencdata, *decdata;
+	unsigned int blksize, blkcount;
+	unsigned int blkidx, charidx;
+	unsigned char *pkey;
+	size_t b64encdatalen, encdatalen;
 	
 	if (argc < 2)
 		return 0x1;
@@ -180,8 +188,6 @@ int main(int argc, char *argv[])
 	/*
 	 *	Contents loading
 	 */
-	unsigned char *encdata, *tencdata, *decdata;
-	size_t b64encdatalen, encdatalen;
 	if (!load_file( argv[1], (char **) &encdata, &b64encdatalen))
 	{
 		free(encdata);
@@ -209,7 +215,6 @@ int main(int argc, char *argv[])
 	/*
 	 *	Keysize determination
 	 */
-	unsigned int keysizes[5];
 	if (find_keysize((char*) encdata, encdatalen, keysizes, 5, 2, 50))
 	{
 		free(encdata);
@@ -230,11 +235,10 @@ int main(int argc, char *argv[])
 	/*
 	 *	Decoding attempt
 	 */
-	unsigned int i,k;
 	for (i = 0; i < 5; i++)
 	{
-		unsigned int blksize = keysizes[i];
-		unsigned int blkcount = (int) (encdatalen/(float) blksize);
+		blksize = keysizes[i];
+		blkcount = (int) (encdatalen/(float) blksize);
 
 		printf("\n-----------\nKeylen :%d \n", blksize );
 		printf("Blkcount :%d \n-----------\n", blkcount);
@@ -242,7 +246,6 @@ int main(int argc, char *argv[])
 		/*
 	 	 *	Transposition
 	 	 */
-	 	unsigned int blkidx, charidx;
 	 	for(blkidx = 0; blkidx < blkcount; blkidx++)
 	 		for (charidx = 0; charidx < blksize; charidx++)
 	 			tencdata[charidx*blkcount + blkidx] = encdata[blkidx*blksize+charidx];
@@ -251,7 +254,6 @@ int main(int argc, char *argv[])
 		/*
 		 *  Single line detect
 		 */
-		unsigned char *pkey;
 		pkey = malloc((blksize + 1)*sizeof(*pkey));
 		if(NULL == pkey)
 		{

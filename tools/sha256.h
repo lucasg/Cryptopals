@@ -3,8 +3,8 @@
  * Functions name and typedefs modified to fit the project's code style.
  */
 
-// Original Disclaimer
-/*********************************************************************
+/* Original Disclaimer
+ *********************************************************************
 * Filename:   sha256.h
 * Author:     Brad Conte (brad AT bradconte.com)
 * Copyright:

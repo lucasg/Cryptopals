@@ -1,7 +1,7 @@
 
 # Toolchain used 
 CC=gcc
-CFLAGS= -g -Wall -MD -MP
+CFLAGS= -g -Wall -MD -MP -ansi -pedantic
 LDFLAGS=
 LDLIBS=
 

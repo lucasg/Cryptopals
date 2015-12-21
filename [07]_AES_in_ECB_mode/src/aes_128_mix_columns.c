@@ -10,31 +10,31 @@ unsigned char galois_mult_by_two(unsigned char val)
 		return (val << 1);
 }
 
-// x*3 = (x*2)+x
+/* x*3 = (x*2)+x */
 unsigned char galois_mult_by_three(unsigned char val)
 {
 	return galois_mult_by_two(val) ^ val;
 }
 
-// x×9=(((x×2)×2)×2)+x
+/* x×9=(((x×2)×2)×2)+x */
 unsigned char galois_mult_by_nine(unsigned char val)
 {
 	return galois_mult_by_two( galois_mult_by_two( galois_mult_by_two(val) ) ) ^ val;
 }
 
-// x×11=((((x×2)×2)+x)×2)+x
+/* x×11=((((x×2)×2)+x)×2)+x */
 unsigned char galois_mult_by_eleven(unsigned char val)
 {
 	return galois_mult_by_two( galois_mult_by_two( galois_mult_by_two(val) ) ^ val ) ^ val;
 }
 
-// x×13=((((x×2)+x)×2)×2)+x
+/* x×13=((((x×2)+x)×2)×2)+x  */
 unsigned char galois_mult_by_thirteen(unsigned char val)
 {
 	return galois_mult_by_two( galois_mult_by_two( galois_mult_by_two(val) ^ val ) ) ^ val;
 }
 
-// x×14=((((x×2)+x)×2)+x)×2
+/* x×14=((((x×2)+x)×2)+x)×2  */
 unsigned char galois_mult_by_fourteen(unsigned char val)
 {
 	return galois_mult_by_two( galois_mult_by_two( galois_mult_by_two(val) ^ val ) ^ val ) ;

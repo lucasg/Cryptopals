@@ -118,7 +118,7 @@ void sha256_result(struct sha256nfo *ctx, uint8_t hash[])
 
 	i = ctx->datalen;
 
-	// Pad whatever data is left in the buffer.
+	/* Pad whatever data is left in the buffer. */
 	if (ctx->datalen < SHA256_BLOCK_SIZE - 8) {
 		ctx->data[i++] = 0x80;
 		while (i < SHA256_BLOCK_SIZE - 8)
@@ -132,7 +132,7 @@ void sha256_result(struct sha256nfo *ctx, uint8_t hash[])
 		memset(ctx->data, 0, 56);
 	}
 
-	// Append to the padding the total message's length in bits and transform.
+	/* Append to the padding the total message's length in bits and transform. */
 	ctx->bitlen += ctx->datalen * 8;
 	ctx->data[63] = ctx->bitlen;
 	ctx->data[62] = ctx->bitlen >> 8;
@@ -144,8 +144,10 @@ void sha256_result(struct sha256nfo *ctx, uint8_t hash[])
 	ctx->data[56] = ctx->bitlen >> 56;
 	sha256_transform(ctx, ctx->data);
 
-	// Since this implementation uses little endian uint8_t ordering and SHA uses big endian,
-	// reverse all the uint8_ts when copying the final state to the output hash.
+	/*
+	 * Since this implementation uses little endian uint8_t ordering and SHA uses big endian,
+	 * reverse all the uint8_ts when copying the final state to the output hash.
+	 */
 	for (i = 0; i < 4; ++i) {
 		hash[i]      = (ctx->state[0] >> (24 - i * 8)) & 0x000000ff;
 		hash[i + 4]  = (ctx->state[1] >> (24 - i * 8)) & 0x000000ff;
@@ -169,15 +171,15 @@ void sha256_init_Hmac(struct sha256nfo *s, const uint8_t* key, size_t keyLength)
 
 	memset(s->keyBuffer, 0, SHA256_BLOCK_SIZE);
 	if (keyLength > SHA256_BLOCK_SIZE) {
-		// Hash long keys
+		/* Hash long keys */
 		sha256_init(s);
 		for (;keyLength--;) sha256_write(s, key++, 1);
 		sha256_result(s, s->keyBuffer);
 	} else {
-		// Block length keys are used as is
+		/* Block length keys are used as is */
 		memcpy(s->keyBuffer, key, keyLength);
 	}
-	// Start inner hash
+	/* Start inner hash */
 	sha256_init(s);
 	for (i=0; i<SHA256_BLOCK_SIZE; i++) {
 		c = s->keyBuffer[i] ^ HMAC_IPAD;
@@ -193,9 +195,9 @@ void sha256_result_Hmac(struct sha256nfo *s, uint8_t hash[])
 	size_t i;
 	uint8_t c;
 
-	// Complete inner hash
+	/* Complete inner hash */
 	sha256_result(s, s->innerHash);
-	// Calculate outer hash
+	/* Calculate outer hash */
 	sha256_init(s);
 	for (i=0; i<SHA256_BLOCK_SIZE; i++){
 		c = s->keyBuffer[i] ^ HMAC_OPAD;

@@ -29,7 +29,7 @@ int mpz_invmod(mpz_t *inv, mpz_t x, mpz_t n)
 
 	if (0 > mpz_sgn(x))
 	{
-		// x = n - (-x % n);
+		/*  x = n - (-x % n); */
 		mpz_mul(x,x, m_one);
 		mpz_mod(x, x, n);
 		mpz_sub(x, n, x);
@@ -39,16 +39,16 @@ int mpz_invmod(mpz_t *inv, mpz_t x, mpz_t n)
     while (0 != mpz_sgn(nr))
     {
     
-      // q = r/nr;
+      /* q = r/nr; */
       mpz_tdiv_q (q, r, nr);
 
-      //tmp = nt;  nt = t - q*nt;  t = tmp;
+      /* tmp = nt;  nt = t - q*nt;  t = tmp; */
 	  mpz_set(tmp, nt);
 	  mpz_mul(nt, q, nt);
       mpz_sub(nt, *inv, nt);
 	  mpz_set(*inv, tmp);
 	  
-      //tmp = nr;  nr = r - q*nr;  r = tmp;
+      /* tmp = nr;  nr = r - q*nr;  r = tmp; */
 	  mpz_set(tmp, nr);
 	  mpz_mul(nr, q, nr);
       mpz_sub(nr, r, nr);
@@ -83,7 +83,6 @@ void check_invmod(int x,  int n,  int expected_result)
 
 	mpz_init_set_si(a, x);
 	mpz_init_set_si(b, n);
-	//mpz_init(inv);
 	mpz_invmod(&inv, a, b);
 
 	printf("Invmod of %d %% %d \n", x, n );

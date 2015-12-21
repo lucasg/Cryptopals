@@ -18,21 +18,21 @@ int test_aes_128_decrypt()
 
 	memcpy(state, aes_128_decrypt_test_ciphertext, aes_128_block_len);
 
-	// ciphertext state
+	/* ciphertext state */
 	ts_idx = 0;
 	if (strncmp((char*) state, (char*) aes_128_decrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
 	else
 		ts_idx++;	
 
-	// first key expansion
+	/* first key expansion */
 	aes_128_key_expansion(round_keys, aes_128_decrypt_test_key);
 	if (strncmp((char*) round_keys + aes_128_block_len*aes_128_num_rounds, (char*) aes_128_decrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
 	else
 		ts_idx++;
 
-	// add round key
+	/* add round key  */
 	aes_128_add_round_key(state,round_keys + aes_128_block_len*aes_128_num_rounds);
 	if (strncmp((char*) state, (char*) aes_128_decrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
@@ -41,34 +41,34 @@ int test_aes_128_decrypt()
 
 	for (r = 0; r < aes_128_num_rounds - 1; r++)
 	{
-		// inv shift rows
+		/* inv shift rows */
 		aes_128_inv_shift_rows(state);
 		if (strncmp((char*) state, (char*) aes_128_decrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
 		else
 			ts_idx++;
 
-		// add inv subbytes
+		/* add inv subbytes */
 		aes_128_inv_sub_bytes(state);
 		if (strncmp((char*) state, (char*) aes_128_decrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
 		else
 			ts_idx++;
 
-		// i-th key expansion
+		/* i-th key expansion */
 		if (strncmp((char*) round_keys + aes_128_block_len*(aes_128_num_rounds - 1 - r), (char*) aes_128_decrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
 		else
 			ts_idx++;
 		
-		// add round key
+		/* add round key */
 		aes_128_add_round_key(state,round_keys + aes_128_block_len*(aes_128_num_rounds - 1 - r) );
 		if (strncmp((char*) state, (char*) aes_128_decrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
 		else
 			ts_idx++;
 
-		// inv mix columns		
+		/* inv mix columns	 */	
 		aes_128_inv_mix_columns(state);
 		if (strncmp((char*) state, (char*) aes_128_decrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
@@ -77,14 +77,14 @@ int test_aes_128_decrypt()
 
 	}
 
-	// shift rows
+	/* shift rows */
 	aes_128_inv_shift_rows(state);
 	if (strncmp((char*) state, (char*) aes_128_decrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 		return ts_idx;
 	else
 		ts_idx++;
 
-	// add subbytes
+	/* add subbytes */
 	aes_128_inv_sub_bytes(state);
 	if (strncmp((char*) state, (char*) aes_128_decrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 		return ts_idx;
@@ -92,13 +92,13 @@ int test_aes_128_decrypt()
 		ts_idx++;
 
 
-	// Last key expansion
+	/* Last key expansion */
 	if (strncmp((char*) round_keys, (char*) aes_128_decrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 		return ts_idx;
 	else
 		ts_idx++;
 
-	// final add round key -> ciphertext 
+	/* final add round key -> ciphertext  */
 	aes_128_add_round_key(state,round_keys); 
 	if (strncmp((char*) state, (char*) aes_128_decrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 		return ts_idx;
@@ -120,21 +120,21 @@ int test_aes_128_encrypt()
 
 	memcpy(state, aes_128_encrypt_test_plaintext, aes_128_block_len);
 
-	// plaintext state
+	/* plaintext state */
 	ts_idx = 0;
 	if (strncmp((char*) state, (char*) aes_128_encrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
 	else
 		ts_idx++;	
 
-	// first key expansion
+	/* first key expansion */
 	aes_128_key_expansion(round_keys, aes_128_encrypt_test_key);
 	if (strncmp((char*) round_keys, (char*) aes_128_encrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
 	else
 		ts_idx++;
 
-	// add round key
+	/* add round key */
 	aes_128_add_round_key(state,round_keys);
 	if (strncmp((char*) state, (char*) aes_128_encrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
@@ -143,34 +143,34 @@ int test_aes_128_encrypt()
 
 	for (r = 0; r < aes_128_num_rounds - 1; r++)
 	{
-		// add subbytes
+		/* add subbytes */
 		aes_128_sub_bytes(state);
 		if (strncmp((char*) state, (char*) aes_128_encrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
 		else
 			ts_idx++;
 
-		// shift rows
+		/* shift rows */
 		aes_128_shift_rows(state);
 		if (strncmp((char*) state, (char*) aes_128_encrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
 		else
 			ts_idx++;
 
-		// mix columns		
+		/* mix columns */	
 		aes_128_mix_columns(state);
 		if (strncmp((char*) state, (char*) aes_128_encrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
 		else
 			ts_idx++;
 
-		// i-th key expansion
+		/* i-th key expansion */
 		if (strncmp((char*) round_keys + aes_128_block_len*(r+1), (char*) aes_128_encrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
 		else
 			ts_idx++;
 		
-		// add round key
+		/* add round key */
 		aes_128_add_round_key(state,round_keys + aes_128_block_len*(r+1) );
 		if (strncmp((char*) state, (char*) aes_128_encrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 			return ts_idx;
@@ -179,27 +179,27 @@ int test_aes_128_encrypt()
 
 	}
 
-	// add subbytes
+	/* add subbytes */
 	aes_128_sub_bytes(state);
 	if (strncmp((char*) state, (char*) aes_128_encrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 		return ts_idx;
 	else
 		ts_idx++;
 
-	// shift rows
+	/* shift rows */
 	aes_128_shift_rows(state);
 	if (strncmp((char*) state, (char*) aes_128_encrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 		return ts_idx;
 	else
 		ts_idx++;
 
-	// Last key expansion
+	/* Last key expansion */
 	if (strncmp((char*) round_keys + aes_128_block_len*aes_128_num_rounds, (char*) aes_128_encrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 		return ts_idx;
 	else
 		ts_idx++;
 
-	// final add round key -> ciphertext 
+	/* final add round key -> ciphertext  */
 	aes_128_add_round_key(state,round_keys + aes_128_block_len*aes_128_num_rounds ); 
 	if (strncmp((char*) state, (char*) aes_128_encrypt_test_states + aes_128_block_len*ts_idx, aes_128_block_len ))
 		return ts_idx;
@@ -209,7 +209,7 @@ int test_aes_128_encrypt()
 	return ts_idx;
 }
 
-// Test the key expansion algorithm against a known test case
+/* Test the key expansion algorithm against a known test case */
 int test_aes_128_key_schedule()
 {
 	unsigned int i;

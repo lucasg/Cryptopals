@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 
 /*
  *   Load the next line of the filestream
@@ -178,7 +179,7 @@ int detect(const char *filename)
 		}
 		
 		if (print_char_count == hexlen)
-			printf("%d - %d : %s\n", lidx + 1, print_char_count, (char*) ddatl );
+			printf("%d - %ld : %s\n", lidx + 1, print_char_count, (char*) ddatl );
 
 		
 		lidx++;

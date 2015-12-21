@@ -4,10 +4,14 @@
 #include "mini-gmp/mini-gmp.h"
 
 
-// Modular inversion using GMP bignum integers
+/*
+ * Modular inversion using GMP bignum integers
+ */
 int mpz_invmod(mpz_t *inv, mpz_t x, mpz_t n);
 
-// Unit Test for MPZ Modular inversion
+/* 
+ * Unit Test for MPZ Modular inversion
+ */
 void test_mpz_invmod();
 
 

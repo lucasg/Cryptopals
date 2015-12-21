@@ -10,9 +10,9 @@
 # if __BYTE_ORDER__ ==  __ORDER_BIG_ENDIAN__
 # define SHA_BIG_ENDIAN
 # endif
-#else // ! defined __LITTLE_ENDIAN__
+#else /* ! defined __LITTLE_ENDIAN__ */
 # if defined (linux) 
-#  include <endian.h> // machine/endian.h
+#  include <endian.h> /* machine/endian.h */
 #  if __BYTE_ORDER__ ==  __ORDER_BIG_ENDIAN__
 #   define SHA_BIG_ENDIAN
 #  endif
@@ -93,7 +93,7 @@ void sha1_addUncounted(struct sha1nfo *s, uint8_t data) {
 #endif
 	s->bufferOffset++;
 	if (s->bufferOffset == SHA1_BLOCK_LENGTH) {
-		//sha1_print_array(s->buffer, SHA1_BLOCK_LENGTH);
+		/*sha1_print_array(s->buffer, SHA1_BLOCK_LENGTH);*/
 		sha1_hashBlock(s);
 		s->bufferOffset = 0;
 	}
@@ -109,30 +109,31 @@ void sha1_write(struct sha1nfo *s, const char *data, size_t len) {
 }
 
 void sha1_pad(struct sha1nfo *s) {
-	// Implement SHA-1 padding (fips180-2 §5.1.1)
+	/* Implement SHA-1 padding (fips180-2 §5.1.1) */
 
-	// Pad with 0x80 followed by 0x00 until the end of the block
+	/* Pad with 0x80 followed by 0x00 until the end of the block */
 	sha1_addUncounted(s, 0x80);
 	while (s->bufferOffset != 56) sha1_addUncounted(s, 0x00);
 
-	// Append length in the last 8 bytes
-	sha1_addUncounted(s, 0); // We're only using 32 bit lengths
-	sha1_addUncounted(s, 0); // But SHA-1 supports 64 bit lengths
-	sha1_addUncounted(s, 0); // So zero pad the top bits
-	sha1_addUncounted(s, s->byteCount >> 29); // Shifting to multiply by 8
-	sha1_addUncounted(s, s->byteCount >> 21); // as SHA-1 supports bitstreams as well as
-	sha1_addUncounted(s, s->byteCount >> 13); // byte.
+	/* Append length in the last 8 bytes */
+	sha1_addUncounted(s, 0); /* We're only using 32 bit lengths */
+	sha1_addUncounted(s, 0); /* But SHA-1 supports 64 bit lengths */
+	sha1_addUncounted(s, 0); /* So zero pad the top bits */
+	sha1_addUncounted(s, s->byteCount >> 29); /* Shifting to multiply by 8 */
+	sha1_addUncounted(s, s->byteCount >> 21); /* as SHA-1 supports bitstreams as well as */
+	sha1_addUncounted(s, s->byteCount >> 13); /* byte. */
 	sha1_addUncounted(s, s->byteCount >> 5);
 	sha1_addUncounted(s, s->byteCount << 3);
 }
 
 uint8_t* sha1_result(struct sha1nfo *s) {
-	// Pad to complete the last block
+	int i;
+	
+	/* Pad to complete the last block */
 	sha1_pad(s);
 
 #ifndef SHA_BIG_ENDIAN
-	// Swap byte order back
-	int i;
+	/* Swap byte order back */
 	for (i=0; i<5; i++) {
 		s->state[i]=
 			  (((s->state[i])<<24)& 0xff000000)
@@ -142,7 +143,7 @@ uint8_t* sha1_result(struct sha1nfo *s) {
 	}
 #endif
 
-	// Return pointer to hash (20 characters)
+	/* Return pointer to hash (20 characters) */
 	return (uint8_t*) s->state;
 }
 
@@ -153,15 +154,15 @@ void sha1_init_Hmac(struct sha1nfo *s, const uint8_t* key, size_t keyLength) {
 	uint8_t i;
 	memset(s->keyBuffer, 0, SHA1_BLOCK_LENGTH);
 	if (keyLength > SHA1_BLOCK_LENGTH) {
-		// Hash long keys
+		/* Hash long keys */
 		sha1_init(s);
 		for (;keyLength--;) sha1_writebyte(s, *key++);
 		memcpy(s->keyBuffer, sha1_result(s), SHA1_HASH_LENGTH);
 	} else {
-		// Block length keys are used as is
+		/* Block length keys are used as is */
 		memcpy(s->keyBuffer, key, keyLength);
 	}
-	// Start inner hash
+	/* Start inner hash */
 	sha1_init(s);
 	for (i=0; i<SHA1_BLOCK_LENGTH; i++) {
 		sha1_writebyte(s, s->keyBuffer[i] ^ HMAC_IPAD);
@@ -170,9 +171,9 @@ void sha1_init_Hmac(struct sha1nfo *s, const uint8_t* key, size_t keyLength) {
 
 uint8_t* sha1_result_Hmac(struct sha1nfo *s) {
 	uint8_t i;
-	// Complete inner hash
+	/* Complete inner hash */
 	memcpy(s->innerHash,sha1_result(s),SHA1_HASH_LENGTH);
-	// Calculate outer hash
+	/* Calculate outer hash */
 	sha1_init(s);
 	for (i=0; i<SHA1_BLOCK_LENGTH; i++) sha1_writebyte(s, s->keyBuffer[i] ^ HMAC_OPAD);
 	for (i=0; i<SHA1_HASH_LENGTH; i++) sha1_writebyte(s, s->innerHash[i]);

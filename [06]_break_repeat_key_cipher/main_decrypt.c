@@ -15,25 +15,25 @@ unsigned load_file(char *fd_stream,	char **contents, size_t *contents_size)
 	unsigned int fileSize = 0;
 	void *p;
 
-	//Open the stream. Note "b" to avoid DOS/UNIX new line conversion.
+	/* Open the stream. Note "b" to avoid DOS/UNIX new line conversion. */
 	stream = fopen(fd_stream, "rb");
 
-	//Seek to the end of the file to determine the file size
+	/* Seek to the end of the file to determine the file size */
 	fseek(stream, 0L, SEEK_END);
 	fileSize = ftell(stream);
 	fseek(stream, 0L, SEEK_SET);
 
-	//Allocate enough memory (add 1 for the \0, since fread won't add it)
+	/* Allocate enough memory (add 1 for the \0, since fread won't add it) */
 	p = malloc(fileSize+1);
 	if( NULL == p)
 		return 0x00;
 	(*contents) = (char*) p;
 
-	//Read the file 
+	/* Read the file */
 	*contents_size=fread((*contents),1,fileSize,stream) + 1;
-	(*contents)[*contents_size]=0; // Add terminating zero.
+	(*contents)[*contents_size]=0; /* Add terminating zero. */
 
-	//Close the file
+	/*Close the file */
 	fclose(stream);
 
 	return 0x1;
@@ -42,14 +42,15 @@ unsigned load_file(char *fd_stream,	char **contents, size_t *contents_size)
 
 int main(int argc, char *argv[])
 {
+	unsigned char *encdata, *decdata;
+	size_t b64encdatalen, encdatalen;
+	
 	if (argc < 3)
 		return 0x1;
 
 	/*
 	 *	Contents loading
 	 */
-	unsigned char *encdata, *decdata;
-	size_t b64encdatalen, encdatalen;
 	if (!load_file( argv[1], (char **) &encdata, &b64encdatalen))
 	{
 		free(encdata);

@@ -3,7 +3,7 @@
 
 void xor_decode(unsigned char* dec, const unsigned char* enc, size_t len, const unsigned char* key, size_t keylen)
 {
-	// symetrical properties of xor.
+	/* symetrical properties of xor. */
 	xor_encode(dec, enc, len, key, keylen);
 }
 
@@ -14,14 +14,14 @@ void xor_encode(unsigned char* enc, const unsigned char* dec, size_t len, const 
 	while(i < len)
 	{
 		enc[i] = dec[i] ^ key[i % keylen];
-		//printf("0x%x ^ 0x%x -> 0x%x \n", dec[i] , key[i % keylen], enc[i] );
+		/* printf("0x%x ^ 0x%x -> 0x%x \n", dec[i] , key[i % keylen], enc[i] ); */
 		i++;
 	}
 }
 
 void xor_decode_uint(unsigned int* dec, const unsigned int* enc, size_t len, const unsigned int* key, size_t keylen)
 {
-	// symetrical properties of xor.
+	/* symetrical properties of xor. */
 	xor_encode_uint(dec, enc, len, key, keylen);
 }
 
@@ -96,11 +96,11 @@ unsigned int caesar_roundtrip_test()
 	unsigned char ciphertext_c[14], rtriptext_c[14];
 	unsigned int  ciphertext_i[14], rtriptext_i[14];
 
-	// ROT-13 encoding scheme
+	/* ROT-13 encoding scheme */
 	caesar_encode(ciphertext_c, plaintext_c, 14, 13 );
 	caesar_decode(rtriptext_c, ciphertext_c, 14, 13 );
 
-	// also ROT-13 encoding scheme
+	/* also ROT-13 encoding scheme */
 	caesar_encode_uint(ciphertext_i, plaintext_i, 14, 13 );
 	caesar_decode_uint(rtriptext_i, ciphertext_i, 14, 13 );
 

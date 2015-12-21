@@ -17,7 +17,7 @@ void aes_128_encrypt(unsigned char *ctext, const unsigned char *ptext, const uns
 	unsigned char state[AES_128_BLOCK_LEN] = {0};
 	unsigned char round_keys[AES_128_BLOCK_LEN*(AES_128_NUM_ROUNDS + 1)];
 
-	// key expansion
+	/* key expansion */
 	aes_128_key_expansion(round_keys, key);
 
 	memcpy(state, ptext, aes_128_block_len);

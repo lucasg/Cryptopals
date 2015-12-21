@@ -1,6 +1,7 @@
 #include "b64.h"
 #include <stdio.h>
-#include <unistd.h>
+#include <stdint.h>
+
 
 /*
  * Compute the resulting base64 word count, with padding
@@ -33,15 +34,17 @@ size_t b64_get_ascii_wc(size_t b64_wc)
  */
 void hex_deflate(char *dstbuf, const  char *srcbuf, size_t dst_wordcount, size_t src_wordcount)
 {
-	// array sizes mismatch
+	int32_t word;
+	unsigned int i= 0,blk = 0;
+
+	/* array sizes mismatch */
 	if (dst_wordcount*8  < src_wordcount*6)
 		return;
 
-	unsigned int i= 0,blk = 0;
 
 	while(blk < src_wordcount)
 	{
-		int32_t word = 0;
+		word = 0;
 		for (i=0; i<4;i++)
 			word = (word << 6) + srcbuf[i];
 
@@ -62,12 +65,12 @@ void hex_deflate(char *dstbuf, const  char *srcbuf, size_t dst_wordcount, size_t
  */
 void hex_inflate(char *dstbuf, const  char *srcbuf, size_t dst_wordcount, size_t src_wordcount)
 {
-	// array sizes mismatch
+	unsigned int i,j = 0;
+
+	/* array sizes mismatch */
 	if (dst_wordcount*6  < src_wordcount*8)
 		return;
 
-
-	unsigned int i,j = 0;
 	while(j < src_wordcount)
 	{
 		int32_t word = 0;
@@ -93,33 +96,34 @@ void hex_inflate(char *dstbuf, const  char *srcbuf, size_t dst_wordcount, size_t
  */
 size_t b64_encode(char *b64, const char *ascii, size_t ascii_wc)
 {
+	unsigned int i;
+	unsigned short b64_val;
 	size_t b64_wc = b64_get_b64_wc(ascii_wc);
 
-	// 6-bit expand
+	/* 6-bit expand */
 	hex_inflate(b64, ascii, b64_wc, ascii_wc);
 
 	
-	// Convert base64 ascii representation to actual value 
-	unsigned int i;
+	/* Convert base64 ascii representation to actual value  */
 	for (i =0; i < b64_wc; i++)
 	{
-		unsigned short b64_val = b64[i];
+		b64_val = b64[i];
 
-		if (!b64_val) // padding
+		if (!b64_val) /* padding */
 			b64[i] = '=';
 		else if (b64_val < 26)
-			b64[i] = b64_val + 65; // A-Z
+			b64[i] = b64_val + 65; /* A-Z */
 		else if(b64_val < 52)
-			b64[i] = b64_val + 71; // a-z
+			b64[i] = b64_val + 71; /* a-z */
 		else if(b64_val < 62)
-			b64[i] = b64_val - 4; // 0-9
-		else // specials
+			b64[i] = b64_val - 4; /* 0-9 */
+		else /* specials */
 		{	
 			if(62 == b64_val)
 				b64[i] = '+';
 			else if(63 == b64_val)
 				b64[i] = '/';
-			else // padding
+			else /* padding */
 				b64[i] = '=';
 		}
 
@@ -134,7 +138,9 @@ size_t b64_encode(char *b64, const char *ascii, size_t ascii_wc)
  */
 size_t b64_decode(char *ascii, const  char *b64, size_t b64_wc)
 {
+	unsigned int i;
 	char *b64enc_cpy;
+	unsigned short b64_val;
 	size_t ascii_len = 0;
 	size_t ascii_wc = b64_get_ascii_wc(b64_wc);
 
@@ -142,25 +148,24 @@ size_t b64_decode(char *ascii, const  char *b64, size_t b64_wc)
 	if(NULL == b64enc_cpy)
 		return 0x00;
 
-	// Convert symbols to base64 ascii representation
-	unsigned int i;
+	/* Convert symbols to base64 ascii representation */
 	for (i =0; i < b64_wc; i++)
 	{
-		unsigned short b64_val = b64[i];
+		b64_val = b64[i];
 
 		if(b64_val < 58 && b64_val >= 48)
-			b64enc_cpy[i] = b64_val + 4; // 0-9
+			b64enc_cpy[i] = b64_val + 4; /* 0-9 */
 		else if(b64_val < 91 && b64_val >= 65)
-			b64enc_cpy[i] = b64_val - 65; // A-Z
+			b64enc_cpy[i] = b64_val - 65; /* A-Z */
 		else if(b64_val < 123 && b64_val >= 97)
-			b64enc_cpy[i] = b64_val - 71; // a-z
-		else // specials
+			b64enc_cpy[i] = b64_val - 71; /* a-z */
+		else /* specials */
 		{	
 			if('+' == b64_val)
 				b64enc_cpy[i] = 62;
 			else if('/' == b64_val)
 				b64enc_cpy[i] = 63;
-			else  // padding
+			else  /* padding */
 				b64enc_cpy[i] = 0x00;
 		}
 
@@ -168,7 +173,7 @@ size_t b64_decode(char *ascii, const  char *b64, size_t b64_wc)
 			ascii_len++;
 	}
 
-	// 6-bit compression
+	/* 6-bit compression */
 	hex_deflate(ascii, b64enc_cpy, ascii_wc, b64_wc);
 
 	free(b64enc_cpy);
@@ -215,6 +220,8 @@ unsigned int b64_roundtrip_test()
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <getopt.h>
+
 
 static unsigned char manpage[] = "\n"
 "Base64 codec tool. \n"
@@ -235,6 +242,9 @@ static unsigned char invalid_options[] = "encode and decode option can't be both
 
 int main (int argc, char *argv[])
 {
+    char *input;
+    char *output;
+    unsigned int input_len;
 	int c, encode = 0x00, decode = 0x00;
 
 
@@ -269,9 +279,6 @@ int main (int argc, char *argv[])
     /*
      *   Input : either a typed string or a < stdin redirection
      */
-    char *input;
-    unsigned int input_len;
-
     if(argc > optind)
     {
         input = argv[optind];
@@ -295,7 +302,6 @@ int main (int argc, char *argv[])
 
 
 
-    char *output;
     /*
      *   Functions
      */

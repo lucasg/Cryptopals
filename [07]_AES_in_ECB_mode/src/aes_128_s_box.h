@@ -42,10 +42,14 @@ static const unsigned char aes_128_inv_s_box[256] =
 };
 
 
-// SubBytes operation on AES-128 bit
+/*
+ * SubBytes operation on AES-128 bit
+ */
 void aes_128_sub_bytes(unsigned char *state);
 
-// InvSubBytes operation on AES-128 bit
+/*
+ * InvSubBytes operation on AES-128 bit
+ */
 void aes_128_inv_sub_bytes(unsigned char *state);
 
 

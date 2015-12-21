@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <getopt.h>
 
 static unsigned char manpage[] = "\n"
 "PKCS#7 padding mechanism. \n"
@@ -44,55 +45,58 @@ int validate_pcks(const unsigned char *input)
 
 void generate_pcks(const unsigned char *input, const unsigned char pad_len)
 {
+    char null_byte;
+    unsigned char v;
     unsigned int j, msg_len = strlen((char *) input);
 
     write(1, input, msg_len);
 
-    unsigned char v = pad_len - ( msg_len % pad_len);
+    v = pad_len - ( msg_len % pad_len);
     for (j = 0; j < v; j++)
     {
         write(1, &v, 1);            
     }
 
-    char null_byte = 0x00;
+    null_byte = 0x00;
     write(1, &null_byte, 1);            
 }
 
 int main (int argc, char *argv[])
 {
-	int c, validate = 0x00;
-	int pad_len = 0;
+    int retval;
+    char *input;
+    int c, validate = 0x00;
+    int pad_len = 0;
 
 
     /*
      *   Option Management
      */
-	while ((c = getopt (argc, argv, "vl:")) != -1)
-	switch (c)
+    while ((c = getopt (argc, argv, "vl:")) != -1)
+    switch (c)
     {
     case 'l':
-    	pad_len = (int) atoi(optarg);
-    	if (pad_len < 1 || pad_len > 255)
-    	{
-    		write(1, incorrect_pcks_len, strlen((char*)incorrect_pcks_len));
-    		return 0x1;
-    	}
-    	break;
+        pad_len = (int) atoi(optarg);
+        if (pad_len < 1 || pad_len > 255)
+        {
+            write(1, incorrect_pcks_len, strlen((char*)incorrect_pcks_len));
+            return 0x1;
+        }
+        break;
 
     case 'v':
         validate = 1;
         break;
 
     default:
-    	printf("%s", manpage);
-		return 0x00;
+        printf("%s", manpage);
+        return 0x00;
     }
 
 
     /*
      *   Input Management
      */
-    char *input;
     if(argc > optind)
         input = argv[optind];
     else
@@ -116,7 +120,7 @@ int main (int argc, char *argv[])
      */
     if (validate)
     {
-        int retval = validate_pcks((unsigned char*) input);
+        retval = validate_pcks((unsigned char*) input);
 
         if (retval)
             write(1, valid_pcks, strlen((char*) valid_pcks));

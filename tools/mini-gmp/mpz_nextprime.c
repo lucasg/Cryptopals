@@ -153,7 +153,7 @@ void mpz_nextprime (mpz_t *p, const mpz_t  *start)
   	mpz_init(ret);
 
 
-  	// Retrieve bitlength
+  	/* Retrieve bitlength */
   	start_hexstr = mpz_get_str(NULL, 16, *start);
   	bits = 4*strlen(start_hexstr);
   	
@@ -221,7 +221,7 @@ void mpz_nextprime (mpz_t *p, const mpz_t  *start)
 			}
 
 			/* Perform a more tests.  These are probably unnecessary. */
-			//if (mpz_probab_prime_p(ret, 20))
+			/*if (mpz_probab_prime_p(ret, 20)) */
 			break; /* It is a prime with probability 1 - 2^-40. */
         }
     }
@@ -248,7 +248,7 @@ void mpz_nextprime (mpz_t *p, const mpz_t  *start)
 	/* Return value already set in ret. */
 	mpz_set(*p, ret);
 
-	// Cleanup
+	/* Cleanup */
 	free(start_hexstr);
 	mpz_clear(aux);
 	mpz_clear(ret);

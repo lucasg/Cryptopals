@@ -2,7 +2,9 @@
 #include <string.h>
 
 
-// Convert a [0-9a-fA-f] char symbol into it's hex value
+/*
+ *  Convert a [0-9a-fA-f] char symbol into it's hex value
+ */
 unsigned char hex_decode_ch(char symbol)
 {
 	if('0'<= symbol && symbol <= '9')
@@ -15,7 +17,9 @@ unsigned char hex_decode_ch(char symbol)
 		return 0;
 }
 
-// Convert a char into its [0-9a-fA-f] char symbol representation
+/*
+ * Convert a char into its [0-9a-fA-f] char symbol representation
+ */
 unsigned char hex_encode_ch(unsigned char value)
 {
 	value = value & 0xf;

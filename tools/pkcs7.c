@@ -57,6 +57,7 @@ void pkcs7_generate(unsigned char *output, const unsigned char *input, unsigned 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <getopt.h>
 
 static unsigned char manpage[] = "\n"
 "PKCS#7 padding mechanism. \n"
@@ -82,6 +83,8 @@ static unsigned char wrong_pcks[] = "Not a valid pcks padding";
 
 int main (int argc, char *argv[])
 {
+    char *input = NULL, *output = NULL;
+    unsigned int input_len, output_len;
 	int c, validate = 0x00, strip = 0x00;
 	int pad_len = 0;
 
@@ -124,9 +127,6 @@ int main (int argc, char *argv[])
     /*
      *   Input : either a typed string or a < stdin redirection
      */
-    char *input = NULL;
-    unsigned int input_len;
-
     if(argc > optind)
     {
         input = argv[optind];
@@ -149,8 +149,6 @@ int main (int argc, char *argv[])
     }
 
 
-    char *output = NULL;
-    unsigned int output_len;
     /*
      *   Functions
      */

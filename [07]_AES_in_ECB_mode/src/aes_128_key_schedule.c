@@ -47,7 +47,9 @@ void schedule_core(unsigned char *in, unsigned char i) {
     in[0] ^= rcon(i);
 }
 
-// AES key expansion algorithm
+/*
+ * AES key expansion algorithm
+ */
 void aes_128_key_expansion(unsigned char *round_keys, const unsigned char *key)
 {
 	unsigned char t[4];

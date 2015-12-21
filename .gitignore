@@ -13,3 +13,4 @@
 # tmp files
 **/__pycache__/
 *.pyc
+*.html
