@@ -49,7 +49,7 @@ int compute_private_key_from_nonce(mpz_t *private_key, const struct dsa_signatur
 
 	mpz_init(inv_s1);
 	if (mpz_invmod(&inv_s1, signature.r, pubkey.q))
-		return -EINVAL; // modular inverse not found
+		return -EINVAL; /* modular inverse not found */
 
 	mpz_init(*private_key);
 	mpz_mul(*private_key, s_x_k, inv_s1);
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 	char *cracked_pkey_hexstr;
 
 
-	// DSA implementation test
+	/* DSA implementation test */
 	dsa_gen_fixed_parameters(&pubkey);
 	dsa_gen_keys(&p_key, &pubkey);
 
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 						mpz_get_str(NULL, 16, signature.s));
 
 
-	// Challenge
+	/* Challenge */
 	mpz_set_str(signature.r, (char*) "548099063082341131477253921760299949438196259240", 10);
 	mpz_set_str(signature.s, (char*) "857042759984254168557880549501802188789837994940", 10);
 	mpz_set_str(pubkey.y, Y_TO_CRACKED, 16);
