@@ -104,7 +104,7 @@ int compute_private_key_from_nonce(mpz_t *private_key, const struct dsa_signatur
 
 	mpz_init(inv_s1);
 	if (mpz_invmod(&inv_s1, signature.r, pubkey.q))
-		return -EINVAL; // modular inverse not found
+		return -EINVAL; /* modular inverse not found */
 
 	mpz_init(*private_key);
 	mpz_mul(*private_key, s_x_k, inv_s1);
@@ -127,22 +127,22 @@ int main(int argc, char *argv[])
 	mpz_t hash1, hash2, hash_diff, inv_s_diff, s_diff, nonce, pkey, r_verif;
 	size_t i, j, i_hash, messages_count = sizeof(dsa_messages)/sizeof(struct dsa_message);
 
-	// Init
+	/* Init */
 	for (i = 0; i < messages_count; i++)
 		init_dsa_message(&(dsa_messages[i]));
 
 	dsa_gen_fixed_parameters(&pubkey);
 	mpz_init_set_str(pubkey.y, Y_TO_CRACKED, 16);
 
-	// Look for repeated nonce in two messages
+	/* Look for repeated nonce in two messages */
 	for (i = 0; i < messages_count - 1; i++)
 	{
 		for (j = i + 1; j < messages_count; j++)
 		{
 			if (0 == strcmp(dsa_messages[i].r, dsa_messages[j].r))
 			{
-				// Now that we have two message signed with the same nonce,
-				// compute the nonce.
+				/*  Now that we have two message signed with the same nonce,
+				 	compute the nonce. */
 
 				get_mpz_from_sha1_hash(hash1, dsa_messages[i].msg, strlen(dsa_messages[i].msg));
 				get_mpz_from_sha1_hash(hash2, dsa_messages[j].msg, strlen(dsa_messages[j].msg));
@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
 					mpz_mul(nonce, inv_s_diff, hash_diff);
 					mpz_mod(nonce, nonce, pubkey.q);
 
-					// verify computation
+					/* verify computation */
 					mpz_init(r_verif);
 					mpz_powm(r_verif, pubkey.g, nonce, pubkey.p);
 					mpz_mod(r_verif,r_verif, pubkey.q);
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
 	}
 	
 
-	// Cleanup
+	/* Cleanup */
 	for (i = 0; i < messages_count; i++)
 		clear_dsa_message(&(dsa_messages[i]));
 

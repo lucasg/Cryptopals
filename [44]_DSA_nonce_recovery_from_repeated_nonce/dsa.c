@@ -48,13 +48,13 @@ int _dsa_gen_random_number(mpz_t *result, size_t upper_bound_bytelen)
 		return -EINVAL;
 	}
 
-	// Generate random upper_bound_bytelen-byte string for x
+	/* Generate random upper_bound_bytelen-byte string for x */
 	for (i = 0; i < upper_bound_bytelen/sizeof(uint32_t); i++)
 	{
 		((uint32_t*) x_string)[i] = mt19937_get_value(&rgen);
 	}
 
-	// Translate the string into a mpz_t number
+	/* Translate the string into a mpz_t number */
 	hex_encode((char*) x_hexstring, (char*) x_string, 2*20);
 	x_hexstring[2*upper_bound_bytelen] = 0x00;
 	mpz_init_set_str(*result, (char*) x_hexstring, 20);
@@ -69,11 +69,11 @@ int _dsa_gen_bounded_random_number(mpz_t *result, const mpz_t upper_bound)
 	char *upper_bound_hex_string;
 	size_t upper_bound_bytelen;
 
-	// Compute necessary amount a bytelen to generate
+	/* Compute necessary amount a bytelen to generate */
 	upper_bound_hex_string = mpz_get_str(NULL, 16, upper_bound);
 	upper_bound_bytelen = strlen(upper_bound_hex_string)/2;
 
-	// Loop until we get a generated number lower than the upper bound
+	/* Loop until we get a generated number lower than the upper bound */
 	mpz_init_set(*result, upper_bound);
 	while(0 == mpz_sgn(*result) || mpz_cmp(*result, upper_bound) >= 0)
 	{
@@ -122,11 +122,11 @@ int dsa_gen_parameters(struct dsa_pubkey_t *pubkey)
 
 int dsa_gen_keys(mpz_t *priv_key, struct dsa_pubkey_t *pubkey)
 {
-	// Generate random private key
+	/* Generate random private key */
 	if (_dsa_gen_bounded_random_number(priv_key, pubkey -> q))
 			return -EINVAL;	
 
-	// Compute corresponding y
+	/* Compute corresponding y */
 	mpz_init(pubkey -> y);
 	mpz_powm(pubkey -> y, pubkey -> g, *priv_key, pubkey -> p);
 
@@ -139,38 +139,38 @@ int dsa_sign(struct dsa_signature_t *signature, const char message[], const size
 	int dsa_verify_ret_code; 
 	mpz_t s, h_number, inv_s, x_mul_s1;
 
-    // Choose a random nonce
+    /* Choose a random nonce */
     if (_dsa_gen_bounded_random_number(&s, pubkey.q))
    		return -EINVAL;	
     
 
-    // r = (g**nonce mod p) mod q
+    /* r = (g**nonce mod p) mod q */
 	mpz_init(signature -> r);
 	mpz_powm(signature -> r, pubkey.g, s, pubkey.p);
 	mpz_mod( signature -> r, signature -> r, pubkey.q);
 
-    //  s = (H(m) + r*x)nonce-1 mod q
+    /*  s = (H(m) + r*x)nonce-1 mod q */
 	mpz_init(x_mul_s1);
 	mpz_mul(x_mul_s1, priv_key, signature -> r);
 	_dsa_get_mpz_from_sha1_hash(&h_number, message, message_len);
 
-	// inverse the nonce : it's actually better than use t_cdiv_q
+	/* inverse the nonce : it's actually better than use t_cdiv_q */
 	mpz_init(inv_s);
 	if (mpz_invmod(&inv_s, s, pubkey.q))
 	{
 		mpz_clear(s);
 		mpz_clear(h_number);
 		mpz_clear(x_mul_s1);
-		return -EINVAL; // modular inverse not found
+		return -EINVAL; /* modular inverse not found */
 	}
 
-    // signature is (r,s)
+    /* signature is (r,s) */
 	mpz_init(signature -> s);
 	mpz_add(signature -> s, h_number, x_mul_s1);
 	mpz_mul(signature -> s, signature -> s, inv_s);
 	mpz_mod(signature -> s, signature -> s, pubkey.q);
 
-	// check valid signature process
+	/* check valid signature process */
 	dsa_verify_ret_code = EXIT_SUCCESS;
 	if (EXIT_SUCCESS != dsa_verify(*signature, message, message_len, pubkey))
 		dsa_verify_ret_code = -EINVAL;
@@ -209,7 +209,7 @@ int dsa_verify(const struct dsa_signature_t signature, const char message[], con
 	mpz_mul(u_2, signature.r, w);
 
 	
-	// verify signature
+	/* verify signature */
 	mpz_init(v);
 	mpz_powm(u_1, pubkey.g, u_1, pubkey.p);
 	mpz_powm(u_2, pubkey.y, u_2, pubkey.p);
