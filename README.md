@@ -29,7 +29,7 @@ Ex :
 * `make 01 all`  will build all the targets in first challenge.
 * `make tools`   will build all the necessary libraries and bins in the tools folder.
 * `make exos clean`  will run `make clean` on every challenges.
-* `make exos compile`  will run `make compile` on every challenges, building the binary.
+* `make exos build`  will run `make build` on every challenges, building the binary. (`make` whill aslo do the same)
 * `make exos solve`  will run `make solve` on every challenges, building the binary and running it.
 * `make 01 07 09 solve`  will run `make solve` on challenge 01, 07 and 09.
 
@@ -105,7 +105,7 @@ Caveat : challenge `#31 & #32` can't be called from the top-level Makefile since
   - [x] [Bleichenbacher's e=3 RSA Attack]([42]_Bleichenbacher_s_e3_RSA_Attack/)
   - [x] [DSA key recovery from nonce]([43]_DSA_key_recovery_from_nonce)
   - [x] [DSA nonce recovery from repeated nonce]([44]_DSA_nonce_recovery_from_repeated_nonce)
-  - [ ] [DSA parameter tampering](http://cryptopals.com/sets/6/challenges/45)
+  - [x] [DSA parameter tampering](http://cryptopals.com/sets/6/challenges/45)
   - [x] [RSA parity oracle]([46]_RSA_parity_oracle/)
   - [x] [Bleichenbacher's PKCS 1.5 Padding Oracle (Simple Case)]([47]_Bleichenbacher_s_PKCS_1.5_Padding_Oracle_(Simple_Case))
   - [x] [Bleichenbacher's PKCS 1.5 Padding Oracle (Complete Case)]([48]_Bleichenbacher_s_PKCS_1.5_Padding_Oracle_(Complete_Case))
