@@ -21,10 +21,14 @@ const char NIST_p[] = "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024"
  */
 uint64_t get_random_value()
 {
+	uint64_t return_val;
 	struct mt19937_t mt_single_shot;
 	mt19937_init(&mt_single_shot, time(NULL));
 
-	return mt19937_get_value(&mt_single_shot) + (mt19937_get_value(&mt_single_shot) << 32);
+	return_val = mt19937_get_value(&mt_single_shot);
+	return_val <<= 32;
+	return_val += mt19937_get_value(&mt_single_shot);
+	return return_val;
 }
 
 void print_bignum(mpz_ptr bignum)

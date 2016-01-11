@@ -6,7 +6,9 @@
 #include <unistd.h>
 
 #ifdef WIN32
-	#include <Winsock2.h>
+	#include <Winsock2.h>$
+#else
+	#include <arpa/inet.h>
 #endif
 
 static const char admin_key[] = ";admin=true";

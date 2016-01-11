@@ -187,7 +187,7 @@ int analyze_ciphertexts()
 	for (i = 0; i < 60; i++)
 	{
 		xor_decode(plain, ctext_mat + i*ctext_len, ctext_len, key_img, ctext_len );
-		printf("%d : %s\n", i, plain );
+		printf("%zu : %s\n", i, plain );
 	}
 
 

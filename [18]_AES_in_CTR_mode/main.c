@@ -48,7 +48,7 @@ int main ( int argc, char *argv[] )
 	 */ 
 
 	msg_len = b64_decode((char *) ascii_secret, (char *) b64_secret, strlen(b64_secret));
-	printf("msg len : %d\n", msg_len );
+	printf("msg len : %zu\n", msg_len );
 
 	aes_128_decrypt_msg(decoded, ascii_secret, msg_len, (unsigned char*) "YELLOW SUBMARINE", CTR, (union aes_128_init*) &nonce );
 
@@ -73,4 +73,4 @@ int main ( int argc, char *argv[] )
 	free(encoded);
 
 	return 0x00;
-};
+}

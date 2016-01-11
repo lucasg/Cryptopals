@@ -14,7 +14,10 @@ void print_bignum(const mpz_ptr bignum)
 int mpz_invmod(mpz_t *inv, const  mpz_t x, const  mpz_t n)
 {
 	unsigned int return_code = 0x00;
-	mpz_t m_one, nt, r, tmp, q, nr;
+	mpz_t tmp_n, tmp_x, m_one, nt, r, tmp, q, nr;
+
+	mpz_init_set(tmp_n,n); /* internal copy */
+	mpz_init_set(tmp_x,x); /* internal copy */
 
 	mpz_init_set_si(m_one, -1);
 	mpz_init_set_si(*inv, 0);
@@ -25,15 +28,15 @@ int mpz_invmod(mpz_t *inv, const  mpz_t x, const  mpz_t n)
 	mpz_init(nr);
 	mpz_mod (nr, x, n);
 	
-	if (0 > mpz_sgn(n))
-		mpz_mul(n,n, m_one);
+	if (0 > mpz_sgn(tmp_n))
+		mpz_mul(tmp_n,tmp_n, m_one);
 
-	if (0 > mpz_sgn(x))
+	if (0 > mpz_sgn(tmp_x))
 	{
 		/*  x = n - (-x % n); */
-		mpz_mul(x,x, m_one);
-		mpz_mod(x, x, n);
-		mpz_sub(x, n, x);
+		mpz_mul(tmp_x, tmp_x, m_one);
+		mpz_mod(tmp_x, tmp_x, tmp_n);
+		mpz_sub(tmp_x, tmp_n, tmp_x);
 
 	}
 
@@ -65,7 +68,7 @@ int mpz_invmod(mpz_t *inv, const  mpz_t x, const  mpz_t n)
     else
     {	
     	if (mpz_sgn(*inv) < 0) 
-    		mpz_add(*inv, *inv, n);
+    		mpz_add(*inv, *inv, tmp_n);
     }
 
     mpz_clear(m_one);
@@ -74,6 +77,8 @@ int mpz_invmod(mpz_t *inv, const  mpz_t x, const  mpz_t n)
     mpz_clear(tmp);
     mpz_clear(q);
     mpz_clear(nr);
+    mpz_clear(tmp_n);
+    mpz_clear(tmp_x);
 
     return return_code;
 	

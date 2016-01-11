@@ -1,7 +1,9 @@
 #include "client.h"
 #include "server.h"
+#include "mt19937.h"
 #include "mini-gmp/mini-gmp.h"
 #include <stdio.h>
+#include <time.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
@@ -37,6 +39,29 @@ static char *weak_passwords[] = { "123456","password","12345678","qwerty",
 								"monkey","shadow","sunshine","12345",
 								"password123","princess","azerty","trustno1", NULL};
 
+/* return a 128-bit random value using the MT19937. 
+ * I'm pretty sure it's not truly random (small numbers must have are slightl less likely to appear)
+ */
+unsigned int main_get_128_bit_random_value(mpz_t *rvalue)
+{
+	size_t i, char_bit_val = 0x8;
+	uint32_t tmp; 
+	struct mt19937_t mt_single_shot;
+	char r_hexstr[8*4 + 1] = {0};
+
+	mt19937_init(&mt_single_shot, time(NULL));
+
+	for (i = 0; i < 4; i++)
+	{
+		tmp = mt19937_get_value(&mt_single_shot);
+		snprintf(r_hexstr + i*char_bit_val, 1 + char_bit_val, "%08x", tmp);
+	}
+
+	r_hexstr[8*4] = 0x00;
+	mpz_init_set_str(*rvalue, r_hexstr, 16);
+	return 0x00;
+}
+
 
 /*
  *  Custom initialisation procedure for the MITM stub server : we choose B == g in order to compute the shared secret S  without
@@ -66,7 +91,7 @@ char* mitm_server_init_shared(struct server_t *s, const char *email, const size_
 	mpz_init_set(s -> srp.pubkey, s -> srp.g);
 
 	// 2. uH = SHA256(A|B)
-	get_128_bit_random_value(u);
+	main_get_128_bit_random_value(u);
 
 	// 2. Simplified SRP :  u = 128 bit random number
 	mpz_init_set_ui(k, 0 );
@@ -94,7 +119,7 @@ int main(int argc, char *argv[])
 	struct SRP_mitm_t mitm;
 	struct server_t s;
 	struct client_t c;
-	mpz_t N, g, k, u, v, useless_u, x;
+	mpz_t N, g, k, u, useless_u, x;
 	mpz_t tmp_base, tmp_e, S;
 	
 	uint8_t buf[SHA256_HASH_SIZE];

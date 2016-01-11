@@ -10,7 +10,7 @@
 /* return a 128-bit random value using the MT19937. 
  * I'm pretty sure it's not truly random (small numbers must have are slightl less likely to appear)
  */
-unsigned int get_128_bit_random_value(mpz_t *rvalue)
+unsigned int server_get_128_bit_random_value(mpz_t *rvalue)
 {
 	size_t i, char_bit_val = 0x8;
 	uint32_t tmp; 
@@ -111,7 +111,7 @@ char* server_init_shared(struct server_t *s, const char *email, const size_t ema
 	srp_utils_gen_server_pubkey(&(s -> srp.pubkey), k , s -> entries[i].v, s -> srp.g, s -> srp.id, s -> srp.N );
 
 	// 2. uH = SHA256(A|B)
-	get_128_bit_random_value(u);
+	server_get_128_bit_random_value(u);
 
 	// 2. Simplified SRP :  u = 128 bit random number
 	mpz_init_set_ui(k, 0 );

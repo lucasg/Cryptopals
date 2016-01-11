@@ -42,7 +42,7 @@ void test_untemper(const uint32_t val)
 
 	for (i = 0; i < 5; i++)
 		if (untemp_steps[4] != temp_steps[0])
-			printf("Tempering steps %d : 0x%02x - 0x%02x \n", i, temp_steps[i], untemp_steps[4-i]);
+			printf("Tempering steps %zu: 0x%02x - 0x%02x \n", i, temp_steps[i], untemp_steps[4-i]);
 	
 }
 

@@ -76,7 +76,7 @@ char *get_ctext_file_path(size_t i)
 		return NULL;
 	 
 
-	snprintf(output, output_len, "%s/%02d", ciphertext_folder, i);
+	snprintf(output, output_len, "%s/%02zu", ciphertext_folder, i);
 	output[output_len] = 0x01;
 
 	return output;
@@ -92,7 +92,7 @@ int generate_ciphertexts()
 	i = 0;
 	while (NULL != plaintexts[i])
 	{
-		printf("Encrypting plaintext n.%02d\n", (int) i);
+		printf("Encrypting plaintext n.%02zu\n", i);
 		ctext_len = encrypt(&ctext, (unsigned char *) plaintexts[i], strlen(plaintexts[i]));
 		if (!ctext_len)
 			return 0x01;

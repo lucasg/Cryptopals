@@ -144,10 +144,10 @@ int main(int argc, char *argv[])
 				/*  Now that we have two message signed with the same nonce,
 				 	compute the nonce. */
 
-				get_mpz_from_sha1_hash(hash1, dsa_messages[i].msg, strlen(dsa_messages[i].msg));
-				get_mpz_from_sha1_hash(hash2, dsa_messages[j].msg, strlen(dsa_messages[j].msg));
+				get_mpz_from_sha1_hash(&hash1, dsa_messages[i].msg, strlen(dsa_messages[i].msg));
+				get_mpz_from_sha1_hash(&hash2, dsa_messages[j].msg, strlen(dsa_messages[j].msg));
 
-				printf("repeated nonce in messages : \n\t%d : %s\n\t%d : %s\n",
+				printf("repeated nonce in messages : \n\t%zu : %s\n\t%zu : %s\n",
 								i,  dsa_messages[i].msg,
 								j,  dsa_messages[j].msg);
 

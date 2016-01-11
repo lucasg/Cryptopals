@@ -132,7 +132,7 @@ int main (int argc, char *argv[])
 	memset(secret, 0,  (clen - aes_128_block_len + 1)*sizeof(char));
 	memset(tmp_buf, 0, (2*aes_128_block_len)*sizeof(char));
 
-	printf("Cipher Buf len : %d \n",  (clen + aes_128_block_len)*sizeof(char));
+	printf("Cipher Buf len : %zu \n", (size_t) (clen + aes_128_block_len)*sizeof(char));
 	for (i = 0;  i*aes_128_block_len < (clen - aes_128_block_len); i++)
 	{
 		memcpy(tmp_buf, cipher + i*aes_128_block_len, 2*aes_128_block_len*sizeof(char));
@@ -147,7 +147,7 @@ int main (int argc, char *argv[])
 		 printf(" %02x", secret[j]);
 	printf("\n");
 
-	printf("Is it the real secret ? %s", (0 != is_right_answer((char*)secret)) ? "yes" : "no");
+	printf("Is it the real secret ? %s \n", (0 != is_right_answer((char*)secret)) ? "yes" : "no");
 
 
 	free(tmp_buf);

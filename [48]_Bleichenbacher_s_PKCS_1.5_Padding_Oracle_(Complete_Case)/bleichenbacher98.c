@@ -213,17 +213,7 @@ int b98_cleanup(struct bleichenbacher_98_t *b98)
  */
 int b98_initial_search(struct bleichenbacher_98_t *b98)
 {
-	int pad_check = 0x00;
-
 	mpz_cdiv_q (b98->s, b98->n, b98->max_range);
-/*	while(!pad_check)
-	{
-		mpz_add_ui(b98->s, b98->s, 1);
-		pad_check = b98_check_padding(b98);
-
-	}
-
-	return pad_check;*/
 	return b98_search_multiple_range(b98);
 }
 
@@ -234,7 +224,6 @@ int b98_initial_search(struct bleichenbacher_98_t *b98)
 int b98_search_multiple_range(struct bleichenbacher_98_t *b98)
 {
 	int pad_check = 0x00;
-	// mpz_t min_s, max_s;
 
 	while(!pad_check)
 	{

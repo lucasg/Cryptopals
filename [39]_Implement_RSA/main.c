@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 	printf("\nRSA key generation done.\n\n");
 
 	// Message creation
-	printf("Secret len : %d \n", strlen(secret));
+	printf("Secret len : %zu \n", strlen(secret));
 	hex_secret = malloc(1 + 2*strlen(secret)* sizeof(char));
 	if (NULL == hex_secret)
 		goto cleanup;
