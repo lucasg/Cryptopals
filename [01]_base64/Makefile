@@ -12,7 +12,7 @@ DEP = $(OBJS:.o=.d)
 .PHONY: all
 all: solve
 
-build: $(OBJS) 
+build: build_dir $(OBJS) 
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET) 
 
 .PHONY : solve
