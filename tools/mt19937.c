@@ -23,7 +23,7 @@ void mt19937_init(struct mt19937_t *engine, uint32_t seed)
 		tmp = mt[i - 1] ^ (mt[i - 1] >> 30);
 		mt[i] = (uint32_t) (0x6c078965*tmp + i);		
 	}
-}; 
+}
 
 /*
  * Mersenne Twister pseudorandom new values generation.
