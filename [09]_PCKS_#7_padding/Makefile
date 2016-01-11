@@ -10,7 +10,7 @@ DEP = $(OBJS:.o=.d)
 
 all : build_dir compile solve 
 
-compile: build_dir $(OBJS)
+build: build_dir $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)  
 
 .PHONY : solve

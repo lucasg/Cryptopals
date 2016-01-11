@@ -21,7 +21,7 @@ all: build_dir decode compile solve
 decode: build_dir main_decrypt.c 
 	$(CC) $(CFLAGS) $(DECODE_TOOLS) main_decrypt.c -o $(DECODE_TARGET)
 
-compile: build_dir $(OBJS)
+build: build_dir $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)
 
 

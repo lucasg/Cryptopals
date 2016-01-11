@@ -13,7 +13,7 @@ aes_generate:
 	$(MAKE) -C ../tools/ aes_128
 
 
-compile: build_dir $(OBJS) aes_generate
+build: build_dir $(OBJS) aes_generate
 	$(CC) $(CFLAGS) -static -L"../tools/lib/" $(OBJS) -o $(TARGET) -laes_128
 
 

@@ -22,7 +22,7 @@ sha256_test: build_dir $(TMP)/sha256_test.o $(TMP)/sha256.o
 mt_generate:
 	$(MAKE) -C $(TOOLS)/ mt19937
 
-compile: build_dir $(OBJS) mt_generate
+build: build_dir $(OBJS) mt_generate
 	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB)  $(OBJS) -o $(TARGET) -lmt19937
 
 .PHONY : solve

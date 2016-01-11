@@ -12,7 +12,7 @@ OBJS := $(addprefix $(TMP)/, $(OBJS))
 DEP = $(OBJS:.o=.d)  
 
 
-compile: build_dir $(OBJS) 
+build: build_dir $(OBJS) 
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET) 
 
 .PHONY : solve

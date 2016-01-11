@@ -12,7 +12,7 @@ DEP = $(OBJS:.o=.d)
 
 all : solve compile build_dir   
 
-compile: build_dir $(OBJS) libaes 
+build: build_dir $(OBJS) libaes 
 	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB) $(OBJS) -o $(TARGET) -laes_128
 
 .PHONY: solve

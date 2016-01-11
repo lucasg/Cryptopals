@@ -12,7 +12,7 @@ all: build_dir mt_generate compile solve
 mt_generate:
 	$(MAKE) -C $(TOOLS)/ mt19937
 
-compile: build_dir $(OBJS) mt_generate
+build: build_dir $(OBJS) mt_generate
 	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB)  $(OBJS) -o $(TARGET) -lmt19937
 
 .PHONY : solve

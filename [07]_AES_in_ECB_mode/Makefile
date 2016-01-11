@@ -28,7 +28,7 @@ all : build_dir compile validate solve
 libaes_128:
 	$(MAKE) -C ../tools/ aes_128
 
-compile: build_dir $(OBJS) libaes_128
+build: build_dir $(OBJS) libaes_128
 	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB) $(OBJS) -o $(TARGET) -laes_128
 
 validate: $(AES_VAL_OBJS)

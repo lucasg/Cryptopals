@@ -9,10 +9,10 @@ OBJS := b64.o xor.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
 DEP = $(OBJS:.o=.d)  
 
-
+.PHONY: all
 all: solve
 
-compile: build_dir $(OBJS) 
+build: $(OBJS) 
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET) 
 
 .PHONY : solve
@@ -22,4 +22,3 @@ solve: compile
 	
 # count the number of different lines :
 	diff -U 0 result1 solution1 | grep ^@ | wc -l 
-

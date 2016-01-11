@@ -16,7 +16,7 @@ lib_aes:
 lib_mt:
 	$(MAKE) -C $(TOOLS)/ mt19937
 
-compile: build_dir $(OBJS) lib_aes lib_mt
+build: build_dir $(OBJS) lib_aes lib_mt
 	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB) $(OBJS) -o $(TARGET) -laes_128 -lmt19937
 
 .PHONY: solve

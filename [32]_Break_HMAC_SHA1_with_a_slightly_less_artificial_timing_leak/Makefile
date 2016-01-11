@@ -51,7 +51,7 @@ else
 endif
 	$(PYTHON) hmac_server.py
 
-compile: build_dir $(OBJS) 
+build: build_dir $(OBJS) 
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $(TARGET) $(LDLIBS)
 
 

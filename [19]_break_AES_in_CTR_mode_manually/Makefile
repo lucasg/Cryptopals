@@ -15,7 +15,7 @@ aes_generate:
 	$(MAKE) -C ../tools/ aes_128
 
 
-compile: build_dir $(OBJS)
+build: build_dir $(OBJS)
 	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB) $(OBJS) -o $(TARGET) -laes_128
 
 

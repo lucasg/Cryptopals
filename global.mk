@@ -1,7 +1,6 @@
-
 # Toolchain used 
 CC=gcc
-CFLAGS= -g -Wall -MD -MP -ansi -pedantic
+CFLAGS= -g -Wall -MD -MP -pedantic #-ansi
 LDFLAGS=
 LDLIBS=
 
@@ -58,14 +57,20 @@ $(TMP)/%.o : %.c
 
 
 
+# Action to do when calling "make" without args
+.PHONY: no_target
+no_target: build
 
 # create build directories if it doesn't exist
-.PHONY : build_dir
-build_dir: ${BDIR}
-${BDIR}:
-	@mkdir -p ${BDIR}
+.IGNORE: build_dir
+.PHONY: build_dir
+build_dir: 
+	@mkdir -p $(TMP)
+	@mkdir -p $(BIN)
+	@mkdir -p $(LIB)
+#${BDIR}:
 
-
+# clean build directories 
 .IGNORE: clean
 .PHONY: clean
 clean:
