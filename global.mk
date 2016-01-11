@@ -24,7 +24,7 @@ ifeq ($(OS), Windows_NT)
 
 	ECHO_NE = echo -ne "\n"
 else
-	ARCH = linux
+	ARCH = linux_$(shell uname --machine)
 	PYTHON = python3
 	PIP = pip3
 	
@@ -41,9 +41,9 @@ endif
 
 # Output folders
 TOOLS := ../tools
-TMP := tmp_$(ARCH)
-LIB := lib
-BIN := bin
+TMP := tmp/$(ARCH)
+LIB := lib/$(ARCH)
+BIN := bin/$(ARCH)
 BDIR := $(TMP) $(BIN) $(LIB)
 
 # Include dependencies 
