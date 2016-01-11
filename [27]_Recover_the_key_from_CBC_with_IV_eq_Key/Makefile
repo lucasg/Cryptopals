@@ -9,7 +9,7 @@ OBJS := target.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
 DEP = $(OBJS:.o=.d) 
 
-all : build_dir compile solve 
+all : build_dir build solve 
 
 .PHONY: libaes_128
 libaes_128:
@@ -21,5 +21,5 @@ build: build_dir $(OBJS) libaes_128
 
 
 .PHONY : solve
-solve: compile
+solve: build
 	$(TARGET)

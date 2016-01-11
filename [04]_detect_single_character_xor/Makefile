@@ -10,11 +10,11 @@ DEP = $(OBJS:.o=.d)
 
 
 
-all: build_dir compile solve
+all: build_dir build solve
 
 build: build_dir $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET) 
 
 .PHONY : solve
-solve: compile
+solve: build
 	$(TARGET) encoded.txt

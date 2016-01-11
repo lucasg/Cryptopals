@@ -12,7 +12,7 @@ OBJS := md4.o md4_utils.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
 DEP = $(OBJS:.o=.d) 
 
-all : build_dir compile solve 
+all : build_dir build solve 
 
 
 build: build_dir $(OBJS) 
@@ -20,5 +20,5 @@ build: build_dir $(OBJS)
 
 
 .PHONY : solve
-solve: compile
+solve: build
 	$(TARGET)

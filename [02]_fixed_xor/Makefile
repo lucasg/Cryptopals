@@ -4,7 +4,7 @@ vpath %.o $(TMP)
 vpath %.d $(TMP)
 
 
-all: solve compile build_dir
+all: solve build build_dir
 
 
 OBJS := main.o
@@ -16,7 +16,7 @@ build: build_dir $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET) 
 
 .PHONY : solve
-solve: compile
+solve: build
 	$(TARGET) input1 input2 | tee result1
 	@$(ECHO_NE)
 # count the number of different lines :

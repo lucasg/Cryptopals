@@ -9,7 +9,7 @@ DEP = $(OBJS:.o=.d)
 
 # CFLAGS+=-D_DEBUG_SRP
 
-all: build_dir compile solve
+all: build_dir build solve
 
 mt_generate:
 	$(MAKE) -C $(TOOLS)/ mt19937

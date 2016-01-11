@@ -13,7 +13,7 @@ ifeq (all, $(MAKECMDGOALS))
 all : _all
 endif  
 
-SUBCOMMANDS := clean solve compile all #generate
+SUBCOMMANDS := clean solve build all 
 INCLUDE = $(filter $(SUBCOMMANDS),$(MAKECMDGOALS))
 
 ifeq (0, $(words $(INCLUDE)))

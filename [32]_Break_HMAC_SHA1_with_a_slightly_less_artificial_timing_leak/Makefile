@@ -25,7 +25,7 @@ OBJS := hex.o timer.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
 DEP = $(OBJS:.o=.d) 
 
-all : build_dir compile solve 
+all : build_dir build solve 
 
 
 # The webserver use Python's bottle framework.
@@ -37,7 +37,7 @@ bottle:
 # glue the C code with the python script
 libsha1_hmac:
 ifeq ($(OS), Windows_NT)
-	$(PYTHON) setup.py build --compiler=mingw32
+	$(PYTHON) setup.py build --buildr=mingw32
 else
 	$(PYTHON) setup.py install --home=$(CURDIR)
 endif
@@ -56,6 +56,6 @@ build: build_dir $(OBJS)
 
 
 .PHONY : solve
-solve: compile
+solve: build
 	$(TARGET)
 

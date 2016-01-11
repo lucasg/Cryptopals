@@ -4,7 +4,7 @@ vpath %.c $(TOOLS)
 vpath %.o $(TMP)
 vpath %.d $(TMP)
 
-all: solve compile build_dir  
+all: solve build build_dir  
 
 OBJS := ifreq.o xor.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
@@ -17,7 +17,7 @@ build: build_dir $(OBJS)
 
 
 .PHONY : solve
-solve: compile
+solve: build
 	$(TARGET) cipher
 	
 

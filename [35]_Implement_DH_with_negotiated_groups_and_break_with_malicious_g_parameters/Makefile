@@ -1,5 +1,5 @@
 
-SUBCOMMANDS = clean solve compile all
+SUBCOMMANDS = clean solve build all
 
 #Do nothing
 .PHONY : SUBCOMMANDS

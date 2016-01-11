@@ -10,7 +10,7 @@ ifneq ($(MAKECMDGOALS),clean)
 endif
 
 
-all: build_dir mt_generate compile solve
+all: build_dir mt_generate build solve
 
 mt_generate:
 	$(MAKE) -C ../tools/ mt19937
@@ -20,7 +20,7 @@ build: build_dir $(OBJS) mt_generate
 
 
 .PHONY : solve
-solve: compile
+solve: build
 	$(TARGET) | tee result.txt
 	@echo  "\n"
 	

@@ -7,7 +7,7 @@ vpath %.o $(TMP)
 OBJS := b64.o ifreq.o generate.o analyze.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
 
-all : build_dir aes_generate compile solve 
+all : build_dir aes_generate build solve 
 
 aes_generate:
 	$(MAKE) -C ../tools/ aes_128
@@ -19,7 +19,7 @@ build: build_dir $(OBJS) aes_generate
 
 
 .PHONY : solve
-solve: compile
+solve: build
 	rm -f result.txt
 	mkdir -p ctexts
 	

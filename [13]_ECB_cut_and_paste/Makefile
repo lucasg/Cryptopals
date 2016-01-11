@@ -8,7 +8,7 @@ OBJS := poor_man_json.o target.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
 DEP = $(OBJS:.o=.d) 
 
-all : build_dir lib_aes compile solve 
+all : build_dir lib_aes build solve 
 
 lib_aes:
 	$(MAKE) -C $(TOOLS)/ aes_128
@@ -19,5 +19,5 @@ build: build_dir $(OBJS) lib_aes
 
 
 .PHONY : solve
-solve: compile
+solve: build
 	$(TARGET) | tee result.txt

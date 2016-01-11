@@ -9,7 +9,7 @@ DEP = $(OBJS:.o=.d)
 
 # CFLAGS+=-D_DEBUG_SRP
 
-all: build_dir compile solve
+all: build_dir build solve
 
 SHA256_TEST_TARGET:=$(BIN)/test_sha256
 ifeq ($(OS), Windows_NT)
@@ -26,7 +26,7 @@ build: build_dir $(OBJS) mt_generate
 	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB)  $(OBJS) -o $(TARGET) -lmt19937
 
 .PHONY : solve
-solve:	sha256_test compile
+solve:	sha256_test build
 	$(SHA256_TEST_TARGET)
 	$(TARGET) "test@example.com" "test123" | tee result.txt
 	$(TARGET) "tests@example.com" "password123" | tee result.txt

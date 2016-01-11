@@ -15,7 +15,7 @@ OBJS := hamdist.o xor.o b64.o main.o
 OBJS := $(addprefix $(TMP)/, $(OBJS))
 DEP = $(OBJS:.o=.d)  
 
-all: build_dir decode compile solve
+all: build_dir decode build solve
 
 .PHONY: decode
 decode: build_dir main_decrypt.c 
@@ -26,7 +26,7 @@ build: build_dir $(OBJS)
 
 
 .PHONY: solve
-solve: compile decode
+solve: build decode
 	$(TARGET) input1.txt | tee result_keys.txt
 	@$(ECHO_NE)
 	@echo "Decoding with the most probable key"

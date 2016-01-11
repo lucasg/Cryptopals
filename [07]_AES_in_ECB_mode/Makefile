@@ -22,7 +22,7 @@ OBJS := $(addprefix $(TMP)/, $(OBJS))
 DEP = $(OBJS:.o=.d)  
 
 
-all : build_dir compile validate solve 
+all : build_dir build validate solve 
 
 .PHONY: libaes_128
 libaes_128:
@@ -37,7 +37,7 @@ validate: $(AES_VAL_OBJS)
 
 
 .PHONY: solve
-solve: compile
+solve: build
 	$(TARGET) < input.txt | tee result.txt
 	@$(ECHO_NE)
 	

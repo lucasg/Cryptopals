@@ -10,13 +10,13 @@ OBJS := $(addprefix $(TMP)/, $(OBJS))
 DEP = $(OBJS:.o=.d) 
 
 
-all : solve compile build_dir   
+all : solve build build_dir   
 
 build: build_dir $(OBJS) libaes 
 	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB) $(OBJS) -o $(TARGET) -laes_128
 
 .PHONY: solve
-solve: compile
+solve: build
 	$(TARGET) input.txt "YELLOW SUBMARINE" | tee result.txt
 
 .PHONY: libaes
