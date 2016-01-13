@@ -1,4 +1,4 @@
-include ../global.mk
+include ../target.mk
 
 vpath %.o $(TMP)
 
@@ -11,7 +11,7 @@ mt_generate: build_dir
 
 .PHONY : solve
 solve: mt_generate
-	g++ -std=gnu++11 -Wall  -static -I$(TOOLS) -L$(TOOLS)/$(LIB) main.cpp -lmt19937 -o $(TARGET)  
+	g++ -std=gnu++11 -Wall  -static -I$(TOOLS) -L$(TOOLS_LIB) main.cpp -lmt19937 -o $(TARGET)  
 	
 	
 	$(TARGET) | tee result.txt

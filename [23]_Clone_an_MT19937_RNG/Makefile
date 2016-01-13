@@ -1,4 +1,4 @@
-include ../global.mk
+include ../target.mk
 
 vpath %.o $(TMP)
 
@@ -15,7 +15,7 @@ mt_generate:
 
 
 build: build_dir $(OBJS) mt_generate
-	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB)  $(OBJS) -o $(TARGET) -lmt19937
+	$(CC) $(CFLAGS) -static -L$(TOOLS_LIB)  $(OBJS) -o $(TARGET) -lmt19937
 
 .PHONY : solve
 solve: build 

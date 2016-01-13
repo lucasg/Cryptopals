@@ -1,4 +1,4 @@
-include ../global.mk
+include ../target.mk
 
 vpath %.c $(TOOLS)
 vpath %.o $(TMP)
@@ -7,7 +7,7 @@ vpath %.d $(TMP)
 ifeq ($(OS), Windows_NT)
 	CFLAGS+= -DCURL_STATICLIB
 	LDLIBS+= -lcurl -lrtmp -lwinmm  -lssh2 -lz -lidn -lssl -lcrypto -lwldap32 -lws2_32 -lgdi32 -lcrypt32
-	LDFLAGS+= -L$(LIB) -L$(TOOLS)/$(LIB) -static
+	LDFLAGS+= -L$(LIB) -L$(TOOLS_LIB) -static
 else
 # On linux, usually libcurl is already installed, or easy to download (using the package manager).
 # You have the choice of using it either statically or dynamically (shared lib).

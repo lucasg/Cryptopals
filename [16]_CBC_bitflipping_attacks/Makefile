@@ -1,4 +1,4 @@
-include ../global.mk
+include ../target.mk
 
 vpath %.c $(TOOLS):$(TOOLS)/aes_128
 vpath %.o $(TMP)
@@ -16,7 +16,7 @@ lib_aes:
 
 
 build: build_dir $(OBJS) lib_aes
-	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB)	 $(OBJS) -o $(TARGET) -laes_128
+	$(CC) $(CFLAGS) -static -L$(TOOLS_LIB)	 $(OBJS) -o $(TARGET) -laes_128
 
 .PHONY: solve
 solve: build

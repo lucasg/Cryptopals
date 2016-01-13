@@ -1,16 +1,16 @@
-include ../global.mk
+include ../target.mk
 
-all: pkcs7_generate solve 
+all: build solve 
 
-pkcs7_generate:
+build: build_dir
 	$(MAKE) -C $(TOOLS) pkcs7
 
 .PHONY : solve
-solve: pkcs7_generate
+solve: build
 ifeq ($(OS), Windows_NT)
-	$(TOOLS)/$(BIN)/pkcs7.exe -s < input | tee result
+	$(TOOLS_BIN)/pkcs7.exe -s < input | tee result
 else
-	$(TOOLS)/$(BIN)/pkcs7 -s < input | tee result
+	$(TOOLS_BIN)/pkcs7 -s < input | tee result
 endif
 
 	@echo "\n"

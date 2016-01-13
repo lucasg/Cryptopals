@@ -1,4 +1,4 @@
-include ../global.mk
+include ../target.mk
 
 vpath %.o $(TMP)
 vpath %.d $(TMP)

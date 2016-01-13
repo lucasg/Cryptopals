@@ -1,4 +1,4 @@
-include ../global.mk
+include ../target.mk
 
 vpath %.c $(TOOLS)
 vpath %.o $(TMP)
@@ -13,7 +13,7 @@ DEP = $(OBJS:.o=.d)
 all : solve build build_dir   
 
 build: build_dir $(OBJS) libaes 
-	$(CC) $(CFLAGS) -static -L$(TOOLS)/$(LIB) $(OBJS) -o $(TARGET) -laes_128
+	$(CC) $(CFLAGS) -static -L$(TOOLS_LIB) $(OBJS) -o $(TARGET) -laes_128
 
 .PHONY: solve
 solve: build
