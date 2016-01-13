@@ -147,9 +147,10 @@ int main(int argc, char *argv[])
 				get_mpz_from_sha1_hash(&hash1, dsa_messages[i].msg, strlen(dsa_messages[i].msg));
 				get_mpz_from_sha1_hash(&hash2, dsa_messages[j].msg, strlen(dsa_messages[j].msg));
 
-				printf("repeated nonce in messages : \n\t%zu : %s\n\t%zu : %s\n",
-								i,  dsa_messages[i].msg,
-								j,  dsa_messages[j].msg);
+		
+				printf("repeated nonce in messages : \n\t%lu : %s\n\t%lu : %s\n",
+								(unsigned long) i,  dsa_messages[i].msg,
+								(unsigned long) j,  dsa_messages[j].msg);
 
 				mpz_init(hash_diff);
 				mpz_sub(hash_diff, hash1, hash2);
