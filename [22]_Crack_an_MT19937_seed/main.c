@@ -5,6 +5,11 @@
 #include <stdlib.h>	
 #include <stdio.h>
 
+#ifdef WIN32
+	#include <windows.h>
+	#define sleep(t) Sleep(t*1000) 
+#endif
+
 int main(int argc, char *argv[])
 {
 	srand(time(NULL));

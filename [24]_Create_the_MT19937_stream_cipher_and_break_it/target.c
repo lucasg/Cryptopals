@@ -6,6 +6,10 @@
 #include <string.h>	
 #include <unistd.h>
 
+#ifdef WIN32
+	#include <windows.h>
+	#define sleep(t) Sleep(t*1000) 
+#endif
 
 static struct mt19937_t cipher_mt;
 static unsigned int token_init = 0x00;
