@@ -9,13 +9,14 @@
 #define NEW_LINEFEED (1)
 #define BITLEN_MIN (1024)
 
+const char *printable = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.' ";
 const char *b64secret = "VGhhdCdzIHdoeSBJIGZvdW5kIHlvdSBkb24ndCBwbGF5IGFyb3VuZCB3aXRoIHRoZSBGdW5reSBDb2xkIE1lZGluYQ==";
 
 
 int print_secret_message(const mpz_t num, const mpz_t deno, const mpz_t n, unsigned int new_linefeed)
 {
-	size_t secret_len;
-	char *hex_d_secret,*d_secret;
+	size_t i, secret_len;
+	char *hex_d_secret,*d_secret, secret_char;
 	mpz_t secret_num;
 
 	mpz_init_set(secret_num, n);
@@ -35,7 +36,18 @@ int print_secret_message(const mpz_t num, const mpz_t deno, const mpz_t n, unsig
 
 	hex_decode(d_secret, hex_d_secret, strlen(hex_d_secret));
 	d_secret[secret_len] = 0;
-	printf("\rsecret msg : %s", d_secret);
+	printf("\rsecret msg : ");
+
+	/* replace non printable char with $ */
+	for (i = 0; i < secret_len; i++)
+	{
+		secret_char = d_secret[i];
+		if (NULL != strchr(printable,  secret_char))
+			printf("%c", d_secret[i]);
+		else
+			printf("$");
+	}
+	printf("\n");
 
 	if (new_linefeed)
 		printf("\n");
